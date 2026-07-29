@@ -67,28 +67,35 @@
             body { padding-bottom: 90px; }
         }
 
-        /* DESAIN TOGGLE MODERN DENGAN INNER SHADOW (REL) */
-        .custom-toggle {
-            background-color: #e2e6ea; /* Sedikit digelapkan */
-            border-radius: 50rem;
+        /* DESAIN TOGGLE MODERN (SEGMENTED CONTROL iOS STYLE) */
+        .modern-segment {
+            background-color: #e3e6eb; /* Warna rel abu-abu terang */
+            border-radius: 50px;       /* Bentuk pil membulat */
             padding: 6px;
-            box-shadow: inset 0 3px 6px rgba(0,0,0,0.1); /* Efek kedalaman/rel */
-            border: 1px solid #d3d9df;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.06); /* Efek cekung ke dalam */
+            display: flex;
+            margin-bottom: 25px;
         }
-        .custom-toggle .nav-link {
+        .modern-segment .nav-item {
+            flex: 1;
+        }
+        .modern-segment .nav-link {
+            border-radius: 50px;
+            font-weight: 700;
             color: #6c757d;
-            border-radius: 50rem;
-            transition: all 0.3s ease;
             border: none;
-            cursor: pointer;
+            padding: 12px 10px;
+            font-size: 0.95rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Animasi halus iOS */
         }
-        .custom-toggle .nav-link:hover {
+        .modern-segment .nav-link:hover:not(.active) {
             color: #495057;
         }
-        .custom-toggle .nav-link.active {
-            background-color: white;
+        .modern-segment .nav-link.active {
+            background-color: #ffffff;
             color: #0d6efd;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.15); /* Efek timbul pada tombol aktif */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* Efek melayang */
+            transform: scale(1.02); /* Efek tombol sedikit membesar/timbul */
         }
     </style>
 </head>
@@ -105,18 +112,19 @@
         <div class="col-lg-8 mb-4">
             
             <!-- NAVIGASI TOGGLE MODERN -->
-            <ul class="nav nav-pills custom-toggle mb-4 justify-content-center" id="pills-tab" role="tablist">
-                <li class="nav-item flex-fill text-center" role="presentation">
-                    <button class="nav-link active w-100 fw-bold py-2" id="sidang-tab" data-bs-toggle="pill" data-bs-target="#sidang" type="button">Ujian Skripsi/Tugas Akhir</button>
+            <ul class="nav nav-pills modern-segment" id="pills-tab" role="tablist">
+                <li class="nav-item text-center" role="presentation">
+                    <button class="nav-link active w-100" id="sidang-tab" data-bs-toggle="pill" data-bs-target="#sidang" type="button">Ujian Skripsi/Tugas Akhir</button>
                 </li>
-                <li class="nav-item flex-fill text-center" role="presentation">
-                    <button class="nav-link w-100 fw-bold py-2" id="magang-tab" data-bs-toggle="pill" data-bs-target="#magang" type="button">Seminar Magang</button>
+                <li class="nav-item text-center" role="presentation">
+                    <button class="nav-link w-100" id="magang-tab" data-bs-toggle="pill" data-bs-target="#magang" type="button">Seminar Magang</button>
                 </li>
             </ul>
 
-            <div class="tab-content bg-white p-4 shadow-sm rounded border" id="pills-tabContent">
+            <!-- Tambahan border-top agar tidak terlihat menyambung seperti tab -->
+            <div class="tab-content bg-white p-4 shadow-sm rounded border border-top" id="pills-tabContent">
                 
-                <!-- TAB 1: UJIAN SKRIPSI/TUGAS AKHIR -->
+                <!-- TAB 1: UJIAN SKRIPSI/TUGAS Akhir -->
                 <div class="tab-pane fade show active" id="sidang">
                     <div class="border-bottom pb-2 mb-3 mt-2">
                         <h5 class="text-primary mb-0">Kelompok 1 (Ketua & Sekretaris) - 65%</h5>
@@ -194,7 +202,6 @@
 
                 <!-- TAB 2: SEMINAR MAGANG -->
                 <div class="tab-pane fade" id="magang">
-                    <!-- Penambahan class d-none d-md-flex agar header ini sembunyi di layar HP -->
                     <div class="row align-items-center mb-3 border-bottom pb-2 mt-2 d-none d-md-flex">
                         <div class="col-sm-5 fw-bold text-primary">Komisi Penguji</div>
                         <div class="col-sm-4 fw-bold text-primary">Nilai (0-100)</div>
@@ -320,13 +327,31 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    document.querySelectorAll('.s-input').forEach(input => input.addEventListener('input', hitungSidang));
-    document.querySelectorAll('.m-input').forEach(input => input.addEventListener('input', hitungMagang));
+    const inputs = document.querySelectorAll('input[type="number"]');
 
-    document.querySelectorAll('input[type="number"]').forEach(input => {
+    inputs.forEach((input, index) => {
+        // Event Listeners Input
         input.addEventListener('input', function() {
             if (this.value > 100) this.value = 100;
             if (this.value < 0) this.value = 0;
+            
+            if (document.getElementById('sidang').classList.contains('active')) {
+                hitungSidang();
+            } else {
+                hitungMagang();
+            }
+        });
+
+        // FUNGSI PRO: Pindah input pakai tombol Enter
+        input.addEventListener('keydown', function(e) {
+            if (e.key === "Enter") {
+                e.preventDefault(); 
+                if (index < inputs.length - 1) {
+                    inputs[index + 1].focus();
+                } else {
+                    input.blur();
+                }
+            }
         });
     });
 
@@ -389,8 +414,6 @@
     }
 
     function hitungSidang() {
-        if(!document.getElementById('sidang').classList.contains('active')) return;
-
         let k1_inputs = [document.getElementById('s_p1'), document.getElementById('s_p2')];
         let k2_inputs = [document.getElementById('s_p3'), document.getElementById('s_p4'), document.getElementById('s_p5')];
         
@@ -448,17 +471,15 @@
     }
 
     function hitungMagang() {
-        if(!document.getElementById('magang').classList.contains('active')) return;
-
-        let inputs = document.querySelectorAll('.m-input');
+        let magang_inputs = document.querySelectorAll('.m-input');
         let totalScore = 0;
         let totalBobotHadir = 0;
 
-        inputs.forEach(input => {
+        magang_inputs.forEach(input => {
             if (input.value !== '') totalBobotHadir += parseFloat(input.getAttribute('data-bobot'));
         });
 
-        inputs.forEach(input => {
+        magang_inputs.forEach(input => {
             let label = document.getElementById(`bxn_${input.id}`);
             if (input.value !== '') {
                 let bxn = parseFloat(input.value) * (parseFloat(input.getAttribute('data-bobot')) / totalBobotHadir);
@@ -588,8 +609,15 @@
         sub2El.setAttribute('data-val', '0.00');
         
         updateResultUI(0);
+        
+        if (document.getElementById('sidang').classList.contains('active')) {
+            document.getElementById('s_p1').focus();
+        } else {
+            document.getElementById('m_p1').focus();
+        }
     }
 
+    // Mendengarkan pergantian pill toggle
     document.querySelectorAll('button[data-bs-toggle="pill"]').forEach(pill => {
         pill.addEventListener('shown.bs.tab', function (event) {
             if (event.target.id === 'sidang-tab') hitungSidang();
