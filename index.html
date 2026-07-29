@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Penilaian FT UNSRAT</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f6f9; }
+        
+        ::placeholder {
+            opacity: 0.4 !important; 
+            font-style: italic;      
+            font-size: 0.9rem;
+        }
+
+        .input-row {
+            transition: background-color 0.2s ease;
+            border-radius: 6px;
+        }
+        .input-row:hover {
+            background-color: #f8f9fa; 
+        }
+        
+        .result-box {
+            position: sticky;
+            top: 20px;
+            background: white;
+            border-left: 5px solid #0d6efd;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        #hurufAkhir, #angkaAkhir {
+            transition: all 0.3s ease;
+        }
+
+        .bxn-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .subtotal-badge {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .btn-copy-small {
+            font-size: 0.75rem;
+            padding: 0.15rem 0.5rem;
+            transition: all 0.2s;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container py-4">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold">Kalkulator Penilaian Akademik</h2>
+        <h5 class="text-secondary">Fakultas Teknik - Universitas Sam Ratulangi</h5>
+    </div>
+
+    <div class="row">
+        <!-- Kolom Form (Kiri) -->
+        <div class="col-lg-8 mb-4">
+            <ul class="nav nav-tabs shadow-sm bg-white pt-2 px-2 rounded-top" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <button class="nav-link active fw-bold" id="sidang-tab" data-bs-toggle="tab" data-bs-target="#sidang" type="button">Ujian Skripsi/Tugas Akhir</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link fw-bold" id="magang-tab" data-bs-toggle="tab" data-bs-target="#magang" type="button">Seminar Magang</button>
+                </li>
+            </ul>
+
+            <div class="tab-content bg-white p-4 shadow-sm rounded-bottom border-top-0">
+                
+                <!-- TAB 1: UJIAN SKRIPSI/TUGAS AKHIR -->
+                <div class="tab-pane fade show active" id="sidang">
+                    <div class="border-bottom pb-2 mb-3 mt-2">
+                        <h5 class="text-primary mb-0">Kelompok 1 (Ketua & Sekretaris) - 65%</h5>
+                    </div>
+                    
+                    <div class="row align-items-center mb-3 input-row p-1">
+                        <label class="col-sm-5 col-form-label">Penguji 1 (Ketua)</label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control s-input" id="s_p1" min="0" max="100" placeholder="0 - 100">
+                        </div>
+                        <div class="col-sm-3 text-end">
+                            <span class="text-muted bxn-label" id="bxn_s_p1">BxN: 0.00</span>
+                        </div>
+                    </div>
+                    <div class="row align-items-center mb-2 input-row p-1">
+                        <label class="col-sm-5 col-form-label">Penguji 2 (Sekretaris)</label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control s-input" id="s_p2" min="0" max="100" placeholder="0 - 100">
+                        </div>
+                        <div class="col-sm-3 text-end">
+                            <span class="text-muted bxn-label" id="bxn_s_p2">BxN: 0.00</span>
+                        </div>
+                    </div>
+                    
+                    <div class="text-end mb-4 pb-2 border-bottom">
+                        <span class="badge bg-light text-primary border border-primary subtotal-badge" id="subtotal_k1" data-val="0.00">Total BxN Kelompok 1: 0.00</span>
+                        <button class="btn btn-outline-primary btn-copy-small ms-2 fw-bold" onclick="copySingleValue('subtotal_k1', this)">📋 Copy</button>
+                    </div>
+
+                    <div class="border-bottom pb-2 mb-3 mt-4">
+                        <h5 class="text-primary mb-0">Kelompok 2 (Anggota) - 35%</h5>
+                    </div>
+
+                    <div class="row align-items-center mb-3 input-row p-1">
+                        <label class="col-sm-5 col-form-label">Penguji 3 (Anggota)</label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control s-input" id="s_p3" min="0" max="100" placeholder="0 - 100">
+                        </div>
+                        <div class="col-sm-3 text-end">
+                            <span class="text-muted bxn-label" id="bxn_s_p3">BxN: 0.00</span>
+                        </div>
+                    </div>
+                    <div class="row align-items-center mb-3 input-row p-1">
+                        <label class="col-sm-5 col-form-label">Penguji 4 (Anggota)</label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control s-input" id="s_p4" min="0" max="100" placeholder="0 - 100">
+                        </div>
+                        <div class="col-sm-3 text-end">
+                            <span class="text-muted bxn-label" id="bxn_s_p4">BxN: 0.00</span>
+                        </div>
+                    </div>
+                    <div class="row align-items-center mb-2 input-row p-1">
+                        <label class="col-sm-5 col-form-label">Penguji 5 (Anggota)</label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control s-input" id="s_p5" min="0" max="100" placeholder="0 - 100">
+                        </div>
+                        <div class="col-sm-3 text-end">
+                            <span class="text-muted bxn-label" id="bxn_s_p5">BxN: 0.00</span>
+                        </div>
+                    </div>
+
+                    <div class="text-end mb-2">
+                        <span class="badge bg-light text-primary border border-primary subtotal-badge" id="subtotal_k2" data-val="0.00">Total BxN Kelompok 2: 0.00</span>
+                        <button class="btn btn-outline-primary btn-copy-small ms-2 fw-bold" onclick="copySingleValue('subtotal_k2', this)">📋 Copy</button>
+                    </div>
+                    
+                    <div class="mt-4 pt-3 border-top">
+                        <button class="btn btn-sm btn-outline-success w-100 fw-bold shadow-sm" onclick="copySidangColumn('nilai', this)">📋 Copy Kolom "Nilai (N)" Saja (5 Baris)</button>
+                        <div class="alert alert-light border small text-start mt-2 mb-0 text-muted">
+                            💡 <strong>Cara Paste Kolom Nilai (N):</strong><br>
+                            Blok 5 sel kosong ke bawah di kolom 'Nilai (N)' tabel Word, lalu tekan Ctrl+V.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: SEMINAR MAGANG -->
+                <div class="tab-pane fade" id="magang">
+                    <div class="row align-items-center mb-3 border-bottom pb-2 mt-2">
+                        <div class="col-sm-5 fw-bold text-primary">Komisi Penguji</div>
+                        <div class="col-sm-4 fw-bold text-primary">Nilai (0-100)</div>
+                        <div class="col-sm-3 text-end fw-bold text-primary">Hasil (BxN)</div>
+                    </div>
+
+                    <div class="row align-items-center mb-3 input-row p-1">
+                        <label class="col-sm-5 col-form-label">Penguji 1 (Dosen Pemb.) - 30%</label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control m-input" id="m_p1" data-bobot="0.30" min="0" max="100" placeholder="0 - 100">
+                        </div>
+                        <div class="col-sm-3 text-end"><span class="text-muted bxn-label" id="bxn_m_p1">BxN: 0.00</span></div>
+                    </div>
+                    <div class="row align-items-center mb-3 input-row p-1">
+                        <label class="col-sm-5 col-form-label">Penguji 2 (Pemb. Lapangan) - 25%</label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control m-input" id="m_p2" data-bobot="0.25" min="0" max="100" placeholder="0 - 100">
+                        </div>
+                        <div class="col-sm-3 text-end"><span class="text-muted bxn-label" id="bxn_m_p2">BxN: 0.00</span></div>
+                    </div>
+                    <div class="row align-items-center mb-3 input-row p-1">
+                        <label class="col-sm-5 col-form-label">Penguji 3 (Ketua) - 15%</label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control m-input" id="m_p3" data-bobot="0.15" min="0" max="100" placeholder="0 - 100">
+                        </div>
+                        <div class="col-sm-3 text-end"><span class="text-muted bxn-label" id="bxn_m_p3">BxN: 0.00</span></div>
+                    </div>
+                    <div class="row align-items-center mb-3 input-row p-1">
+                        <label class="col-sm-5 col-form-label">Penguji 4 (Anggota 1) - 15%</label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control m-input" id="m_p4" data-bobot="0.15" min="0" max="100" placeholder="0 - 100">
+                        </div>
+                        <div class="col-sm-3 text-end"><span class="text-muted bxn-label" id="bxn_m_p4">BxN: 0.00</span></div>
+                    </div>
+                    <div class="row align-items-center mb-3 input-row p-1">
+                        <label class="col-sm-5 col-form-label">Penguji 5 (Anggota 2) - 15%</label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control m-input" id="m_p5" data-bobot="0.15" min="0" max="100" placeholder="0 - 100">
+                        </div>
+                        <div class="col-sm-3 text-end"><span class="text-muted bxn-label" id="bxn_m_p5">BxN: 0.00</span></div>
+                    </div>
+                    
+                    <div class="mt-4 pt-3 border-top">
+                        <div class="row g-2">
+                            <div class="col-sm-6">
+                                <button class="btn btn-sm btn-outline-success w-100 fw-bold shadow-sm" onclick="copyMagangColumn('nilai', this)">📋 Copy Kolom "Nilai (N)" Saja (5 Baris)</button>
+                            </div>
+                            <div class="col-sm-6">
+                                <button class="btn btn-sm btn-outline-primary w-100 fw-bold shadow-sm" onclick="copyMagangColumn('bxn', this)">📋 Copy Kolom "B x N" Saja (5 Baris)</button>
+                            </div>
+                        </div>
+                        <div class="alert alert-light border small text-start mt-2 mb-0 text-muted">
+                            💡 <strong>Cara Paste Seminar Magang:</strong><br>
+                            Blok 5 sel kosong ke bawah pada masing-masing kolom yang dituju di Word, lalu tekan Ctrl+V.<br>
+                            <em>(Untuk Total Angka & Huruf, gunakan tombol di panel sebelah kanan)</em>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-top text-end">
+                    <button class="btn btn-outline-danger me-2 fw-bold" onclick="if(confirm('Yakin ingin mengosongkan semua isian nilai?')) resetForm()">Bersihkan Form</button>
+                    <button class="btn btn-outline-primary fw-bold" onclick="window.print()">Cetak Halaman</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kolom Hasil (Kanan - Sticky) -->
+        <div class="col-lg-4">
+            <div class="result-box p-4 rounded text-center">
+                <h5 class="text-secondary mb-3">Hasil Evaluasi Akhir</h5>
+                
+                <h1 class="display-2 fw-bold text-muted mb-0" id="hurufAkhir">-</h1>
+                
+                <p class="fs-4 mb-3 mt-2">
+                    Angka: <strong id="angkaAkhir" data-val="0.00">0.00</strong>
+                </p>
+                
+                <button class="btn btn-primary btn-sm px-4 fw-bold shadow-sm" onclick="copyHasilAkhir(this)">
+                    📋 Copy Angka & Huruf Saja
+                </button>
+                
+                <div class="alert alert-light border small text-start mt-3 mb-0 text-muted">
+                    💡 <strong>Cara Paste Angka & Huruf:</strong><br>
+                    Blok 2 sel ke bawah (Total Angka & Huruf) di tabel Word, lalu tekan Ctrl+V.
+                </div>
+
+                <hr class="mt-4">
+                <div class="text-start small text-muted mt-3">
+                    <strong>Ketentuan Peraturan Rektor No 01 2025 Pasal 59:</strong><br>
+                    <span class="badge bg-success">A (≥80)</span>
+                    <span class="badge bg-primary">B+ (75-79)</span>
+                    <span class="badge bg-info">B (70-74)</span>
+                    <span class="badge bg-warning text-dark">C+ (65-69)</span>
+                    <span class="badge bg-secondary">C (60-64)</span>
+                    <span class="badge bg-danger">D (55-59)</span>
+                    <span class="badge bg-dark">E (<55)</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Event Listeners Input
+    document.querySelectorAll('.s-input').forEach(input => input.addEventListener('input', hitungSidang));
+    document.querySelectorAll('.m-input').forEach(input => input.addEventListener('input', hitungMagang));
+
+    document.querySelectorAll('input[type="number"]').forEach(input => {
+        input.addEventListener('input', function() {
+            if (this.value > 100) this.value = 100;
+            if (this.value < 0) this.value = 0;
+        });
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+        if (document.getElementById('sidang').classList.contains('active')) {
+            hitungSidang();
+        } else {
+            hitungMagang();
+        }
+    });
+
+    function getGradeLetter(score) {
+        if (score >= 80.00) return { huruf: 'A', kelas: 'text-success' };
+        if (score >= 75.00) return { huruf: 'B+', kelas: 'text-primary' };
+        if (score >= 70.00) return { huruf: 'B', kelas: 'text-info' };
+        if (score >= 65.00) return { huruf: 'C+', kelas: 'text-warning' };
+        if (score >= 60.00) return { huruf: 'C', kelas: 'text-secondary' };
+        if (score >= 55.00) return { huruf: 'D', kelas: 'text-danger' };
+        return { huruf: 'E', kelas: 'text-dark' };
+    }
+
+    function updateResultUI(angka) {
+        let hurufEl = document.getElementById('hurufAkhir');
+        let angkaEl = document.getElementById('angkaAkhir');
+
+        hurufEl.style.transform = 'scale(1.1)';
+        angkaEl.style.transform = 'scale(1.1)';
+        
+        setTimeout(() => {
+            hurufEl.style.transform = 'scale(1)';
+            angkaEl.style.transform = 'scale(1)';
+        }, 150);
+
+        if (angka === 0) {
+            angkaEl.innerText = '0.00';
+            angkaEl.setAttribute('data-val', '0.00');
+            hurufEl.innerText = '-';
+            hurufEl.className = 'display-2 fw-bold text-muted';
+            return;
+        }
+
+        const hasil = getGradeLetter(angka);
+        angkaEl.innerText = angka.toFixed(2);
+        angkaEl.setAttribute('data-val', angka.toFixed(2));
+        hurufEl.innerText = hasil.huruf;
+        hurufEl.className = `display-2 fw-bold ${hasil.kelas}`;
+    }
+
+    function hitungSidang() {
+        if(!document.getElementById('sidang').classList.contains('active')) return;
+
+        let k1_inputs = [document.getElementById('s_p1'), document.getElementById('s_p2')];
+        let k2_inputs = [document.getElementById('s_p3'), document.getElementById('s_p4'), document.getElementById('s_p5')];
+        
+        let k1_vals = k1_inputs.map(el => el.value !== '' ? parseFloat(el.value) : null).filter(v => v !== null);
+        let k2_vals = k2_inputs.map(el => el.value !== '' ? parseFloat(el.value) : null).filter(v => v !== null);
+
+        let bobot_total_k1 = 0.65;
+        let bobot_total_k2 = 0.35;
+
+        if (k1_vals.length === 0 && k2_vals.length > 0) bobot_total_k2 = 1.0; 
+        else if (k2_vals.length === 0 && k1_vals.length > 0) bobot_total_k1 = 1.0; 
+        else if (k1_vals.length === 0 && k2_vals.length === 0) {
+            bobot_total_k1 = 0;
+            bobot_total_k2 = 0;
+        }
+
+        let bobot_k1_per_orang = k1_vals.length > 0 ? (bobot_total_k1 / k1_vals.length) : 0;
+        let bobot_k2_per_orang = k2_vals.length > 0 ? (bobot_total_k2 / k2_vals.length) : 0;
+
+        let sumK1 = 0;
+        k1_inputs.forEach(el => {
+            let label = document.getElementById(`bxn_${el.id}`);
+            if (el.value !== '') {
+                let bxn = parseFloat(el.value) * bobot_k1_per_orang;
+                sumK1 += bxn;
+                label.innerHTML = `<span class="text-primary">BxN: ${bxn.toFixed(2)}</span>`;
+            } else {
+                label.innerHTML = `<span class="text-danger small">Tidak Hadir</span>`;
+            }
+        });
+
+        let sumK2 = 0;
+        k2_inputs.forEach(el => {
+            let label = document.getElementById(`bxn_${el.id}`);
+            if (el.value !== '') {
+                let bxn = parseFloat(el.value) * bobot_k2_per_orang;
+                sumK2 += bxn;
+                label.innerHTML = `<span class="text-primary">BxN: ${bxn.toFixed(2)}</span>`;
+            } else {
+                label.innerHTML = `<span class="text-danger small">Tidak Hadir</span>`;
+            }
+        });
+
+        let sub1El = document.getElementById('subtotal_k1');
+        let sub2El = document.getElementById('subtotal_k2');
+        
+        sub1El.innerText = `Total BxN Kelompok 1: ${sumK1.toFixed(2)}`;
+        sub1El.setAttribute('data-val', sumK1.toFixed(2));
+        
+        sub2El.innerText = `Total BxN Kelompok 2: ${sumK2.toFixed(2)}`;
+        sub2El.setAttribute('data-val', sumK2.toFixed(2));
+
+        let total = sumK1 + sumK2;
+        updateResultUI(total);
+    }
+
+    function hitungMagang() {
+        if(!document.getElementById('magang').classList.contains('active')) return;
+
+        let inputs = document.querySelectorAll('.m-input');
+        let totalScore = 0;
+        let totalBobotHadir = 0;
+
+        inputs.forEach(input => {
+            if (input.value !== '') totalBobotHadir += parseFloat(input.getAttribute('data-bobot'));
+        });
+
+        inputs.forEach(input => {
+            let label = document.getElementById(`bxn_${input.id}`);
+            if (input.value !== '') {
+                let bxn = parseFloat(input.value) * (parseFloat(input.getAttribute('data-bobot')) / totalBobotHadir);
+                totalScore += bxn;
+                label.innerHTML = `<span class="text-success">BxN: ${bxn.toFixed(2)}</span>`;
+                label.setAttribute('data-val', bxn.toFixed(2)); 
+            } else {
+                label.innerHTML = `<span class="text-danger small">Tidak Hadir</span>`;
+                label.setAttribute('data-val', '');
+            }
+        });
+
+        updateResultUI(totalScore);
+    }
+
+    // Fungsi Copy Kolom Nilai (Skripsi)
+    function copySidangColumn(tipe, btn) {
+        if (tipe === 'nilai') {
+            let textToCopy = "";
+            for (let i = 1; i <= 5; i++) {
+                let nilai = document.getElementById('s_p' + i).value;
+                textToCopy += (nilai !== "" ? nilai.replace('.', ',') : "") + "\n";
+            }
+            textToCopy = textToCopy.trim();
+            
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                let originalText = btn.innerHTML;
+                let originalClass = btn.className;
+                
+                btn.innerHTML = "✅ Tersalin!";
+                btn.className = "btn btn-sm btn-success w-100 fw-bold shadow-sm";
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.className = originalClass;
+                }, 1500);
+            });
+        }
+    }
+
+    // Fungsi Copy Magang (5 Baris Saja)
+    function copyMagangColumn(tipe, btn) {
+        let textToCopy = "";
+        let prefix = 'm_p';
+
+        if (tipe === 'nilai') {
+            for (let i = 1; i <= 5; i++) {
+                let nilai = document.getElementById(prefix + i).value;
+                textToCopy += (nilai !== "" ? nilai.replace('.', ',') : "") + "\n";
+            }
+        } else if (tipe === 'bxn') {
+            for (let i = 1; i <= 5; i++) {
+                let labelEl = document.getElementById('bxn_' + prefix + i);
+                let bxn = labelEl.getAttribute('data-val') || "";
+                textToCopy += (bxn !== "" ? bxn.replace('.', ',') : "") + "\n";
+            }
+        }
+        
+        textToCopy = textToCopy.trim();
+
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            let originalText = btn.innerHTML;
+            let originalClass = btn.className;
+            
+            btn.innerHTML = "✅ Tersalin!";
+            btn.className = "btn btn-sm btn-success w-100 fw-bold shadow-sm";
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.className = originalClass;
+            }, 1500);
+        });
+    }
+
+    // Fungsi Copy Individual (Subtotal)
+    function copySingleValue(elementId, btn) {
+        let element = document.getElementById(elementId);
+        let valToCopy = element.getAttribute('data-val') || "0.00";
+        valToCopy = valToCopy.replace('.', ','); 
+
+        navigator.clipboard.writeText(valToCopy).then(() => {
+            let originalText = btn.innerHTML;
+            let originalClass = btn.className;
+            
+            btn.innerHTML = "✅";
+            btn.className = "btn btn-success btn-copy-small ms-2 fw-bold";
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.className = originalClass;
+            }, 1200);
+        });
+    }
+
+    // Fungsi Copy Angka & Huruf Akhir
+    function copyHasilAkhir(btn) {
+        let angka = document.getElementById('angkaAkhir').getAttribute('data-val') || "0.00";
+        let huruf = document.getElementById('hurufAkhir').innerText || "-";
+        
+        angka = angka.replace('.', ',');
+        let textToCopy = `${angka}\n${huruf}`;
+
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            let originalText = btn.innerHTML;
+            let originalClass = btn.className;
+            
+            btn.innerHTML = "✅ Tersalin!";
+            btn.className = "btn btn-success btn-sm px-4 fw-bold shadow-sm";
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.className = originalClass;
+            }, 1500);
+        });
+    }
+
+    function resetForm() {
+        document.querySelectorAll('input[type="number"]').forEach(input => input.value = '');
+        document.querySelectorAll('.bxn-label').forEach(label => {
+            label.innerText = 'BxN: 0.00';
+            label.removeAttribute('data-val');
+        });
+        
+        let sub1El = document.getElementById('subtotal_k1');
+        let sub2El = document.getElementById('subtotal_k2');
+        
+        sub1El.innerText = 'Total BxN Kelompok 1: 0.00';
+        sub1El.setAttribute('data-val', '0.00');
+        
+        sub2El.innerText = 'Total BxN Kelompok 2: 0.00';
+        sub2El.setAttribute('data-val', '0.00');
+        
+        updateResultUI(0);
+    }
+
+    document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(tab => {
+        tab.addEventListener('shown.bs.tab', function (event) {
+            if (event.target.id === 'sidang-tab') hitungSidang();
+            if (event.target.id === 'magang-tab') hitungMagang();
+        });
+    });
+</script>
+</body>
+</html>
