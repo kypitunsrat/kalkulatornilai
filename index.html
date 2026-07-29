@@ -49,6 +49,47 @@
             padding: 0.15rem 0.5rem;
             transition: all 0.2s;
         }
+
+        /* KHUSUS MOBILE: Desain Bar Melayang di bawah */
+        .mobile-floating-result {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 4px solid #0d6efd;
+            padding: 10px 20px;
+            z-index: 1050;
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.15);
+        }
+
+        @media (max-width: 991px) {
+            body { padding-bottom: 90px; }
+        }
+
+        /* DESAIN TOGGLE MODERN DENGAN INNER SHADOW (REL) */
+        .custom-toggle {
+            background-color: #e2e6ea; /* Sedikit digelapkan */
+            border-radius: 50rem;
+            padding: 6px;
+            box-shadow: inset 0 3px 6px rgba(0,0,0,0.1); /* Efek kedalaman/rel */
+            border: 1px solid #d3d9df;
+        }
+        .custom-toggle .nav-link {
+            color: #6c757d;
+            border-radius: 50rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        .custom-toggle .nav-link:hover {
+            color: #495057;
+        }
+        .custom-toggle .nav-link.active {
+            background-color: white;
+            color: #0d6efd;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15); /* Efek timbul pada tombol aktif */
+        }
     </style>
 </head>
 <body>
@@ -56,22 +97,24 @@
 <div class="container py-4">
     <div class="text-center mb-4">
         <h2 class="fw-bold">Kalkulator Penilaian Akademik</h2>
-        <h5 class="text-secondary">Program Studi Teknik Informatika, Fakultas Teknik, Universitas Sam Ratulangi</h5>
+        <h5 class="text-secondary">Fakultas Teknik - Universitas Sam Ratulangi</h5>
     </div>
 
     <div class="row">
         <!-- Kolom Form (Kiri) -->
         <div class="col-lg-8 mb-4">
-            <ul class="nav nav-tabs shadow-sm bg-white pt-2 px-2 rounded-top" id="myTab" role="tablist">
-                <li class="nav-item">
-                    <button class="nav-link active fw-bold" id="sidang-tab" data-bs-toggle="tab" data-bs-target="#sidang" type="button">Ujian Skripsi/Tugas Akhir</button>
+            
+            <!-- NAVIGASI TOGGLE MODERN -->
+            <ul class="nav nav-pills custom-toggle mb-4 justify-content-center" id="pills-tab" role="tablist">
+                <li class="nav-item flex-fill text-center" role="presentation">
+                    <button class="nav-link active w-100 fw-bold py-2" id="sidang-tab" data-bs-toggle="pill" data-bs-target="#sidang" type="button">Ujian Skripsi/Tugas Akhir</button>
                 </li>
-                <li class="nav-item">
-                    <button class="nav-link fw-bold" id="magang-tab" data-bs-toggle="tab" data-bs-target="#magang" type="button">Seminar Magang</button>
+                <li class="nav-item flex-fill text-center" role="presentation">
+                    <button class="nav-link w-100 fw-bold py-2" id="magang-tab" data-bs-toggle="pill" data-bs-target="#magang" type="button">Seminar Magang</button>
                 </li>
             </ul>
 
-            <div class="tab-content bg-white p-4 shadow-sm rounded-bottom border-top-0">
+            <div class="tab-content bg-white p-4 shadow-sm rounded border" id="pills-tabContent">
                 
                 <!-- TAB 1: UJIAN SKRIPSI/TUGAS AKHIR -->
                 <div class="tab-pane fade show active" id="sidang">
@@ -151,7 +194,8 @@
 
                 <!-- TAB 2: SEMINAR MAGANG -->
                 <div class="tab-pane fade" id="magang">
-                    <div class="row align-items-center mb-3 border-bottom pb-2 mt-2">
+                    <!-- Penambahan class d-none d-md-flex agar header ini sembunyi di layar HP -->
+                    <div class="row align-items-center mb-3 border-bottom pb-2 mt-2 d-none d-md-flex">
                         <div class="col-sm-5 fw-bold text-primary">Komisi Penguji</div>
                         <div class="col-sm-4 fw-bold text-primary">Nilai (0-100)</div>
                         <div class="col-sm-3 text-end fw-bold text-primary">Hasil (BxN)</div>
@@ -205,7 +249,7 @@
                         <div class="alert alert-light border small text-start mt-2 mb-0 text-muted">
                             💡 <strong>Cara Paste Seminar Magang:</strong><br>
                             Blok 5 sel kosong ke bawah pada masing-masing kolom yang dituju di Word, lalu tekan Ctrl+V.<br>
-                            <em>(Untuk Total Angka & Huruf, gunakan tombol di panel sebelah kanan)</em>
+                            <em>(Untuk Total Angka & Huruf, gunakan tombol di panel sebelah kanan/bawah)</em>
                         </div>
                     </div>
                 </div>
@@ -217,7 +261,7 @@
             </div>
         </div>
 
-        <!-- Kolom Hasil (Kanan - Sticky) -->
+        <!-- Kolom Hasil (Kanan - Sticky PC) -->
         <div class="col-lg-4">
             <div class="result-box p-4 rounded text-center">
                 <h5 class="text-secondary mb-3">Hasil Evaluasi Akhir</h5>
@@ -254,9 +298,28 @@
     </div>
 </div>
 
+<!-- KHUSUS MOBILE: FLOATING RESULT BAR DENGAN TOMBOL COPY -->
+<div class="mobile-floating-result d-lg-none">
+    <div class="d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center">
+            <div class="me-3">
+                <strong class="display-6 fw-bold text-muted" id="mobileHurufAkhir">-</strong>
+            </div>
+            <div class="lh-sm">
+                <span class="text-muted small fw-bold">Angka:</span><br>
+                <strong class="fs-5" id="mobileAngkaAkhir">0.00</strong>
+            </div>
+        </div>
+        <div>
+            <button class="btn btn-primary btn-sm px-3 py-2 fw-bold shadow-sm" onclick="copyHasilAkhir(this)">
+                📋 Copy
+            </button>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // Event Listeners Input
     document.querySelectorAll('.s-input').forEach(input => input.addEventListener('input', hitungSidang));
     document.querySelectorAll('.m-input').forEach(input => input.addEventListener('input', hitungMagang));
 
@@ -288,28 +351,41 @@
     function updateResultUI(angka) {
         let hurufEl = document.getElementById('hurufAkhir');
         let angkaEl = document.getElementById('angkaAkhir');
+        let mobileHurufEl = document.getElementById('mobileHurufAkhir');
+        let mobileAngkaEl = document.getElementById('mobileAngkaAkhir');
 
         hurufEl.style.transform = 'scale(1.1)';
         angkaEl.style.transform = 'scale(1.1)';
+        mobileHurufEl.style.transform = 'scale(1.1)';
         
         setTimeout(() => {
             hurufEl.style.transform = 'scale(1)';
             angkaEl.style.transform = 'scale(1)';
+            mobileHurufEl.style.transform = 'scale(1)';
         }, 150);
 
         if (angka === 0) {
             angkaEl.innerText = '0.00';
             angkaEl.setAttribute('data-val', '0.00');
             hurufEl.innerText = '-';
-            hurufEl.className = 'display-2 fw-bold text-muted';
+            hurufEl.className = 'display-2 fw-bold text-muted mb-0';
+            
+            mobileAngkaEl.innerText = '0.00';
+            mobileHurufEl.innerText = '-';
+            mobileHurufEl.className = 'display-6 fw-bold text-muted';
             return;
         }
 
         const hasil = getGradeLetter(angka);
+        
         angkaEl.innerText = angka.toFixed(2);
         angkaEl.setAttribute('data-val', angka.toFixed(2));
         hurufEl.innerText = hasil.huruf;
-        hurufEl.className = `display-2 fw-bold ${hasil.kelas}`;
+        hurufEl.className = `display-2 fw-bold mb-0 ${hasil.kelas}`;
+        
+        mobileAngkaEl.innerText = angka.toFixed(2);
+        mobileHurufEl.innerText = hasil.huruf;
+        mobileHurufEl.className = `display-6 fw-bold ${hasil.kelas}`;
     }
 
     function hitungSidang() {
@@ -398,7 +474,6 @@
         updateResultUI(totalScore);
     }
 
-    // Fungsi Copy Kolom Nilai (Skripsi)
     function copySidangColumn(tipe, btn) {
         if (tipe === 'nilai') {
             let textToCopy = "";
@@ -423,7 +498,6 @@
         }
     }
 
-    // Fungsi Copy Magang (5 Baris Saja)
     function copyMagangColumn(tipe, btn) {
         let textToCopy = "";
         let prefix = 'm_p';
@@ -457,7 +531,6 @@
         });
     }
 
-    // Fungsi Copy Individual (Subtotal)
     function copySingleValue(elementId, btn) {
         let element = document.getElementById(elementId);
         let valToCopy = element.getAttribute('data-val') || "0.00";
@@ -477,7 +550,6 @@
         });
     }
 
-    // Fungsi Copy Angka & Huruf Akhir
     function copyHasilAkhir(btn) {
         let angka = document.getElementById('angkaAkhir').getAttribute('data-val') || "0.00";
         let huruf = document.getElementById('hurufAkhir').innerText || "-";
@@ -489,7 +561,7 @@
             let originalText = btn.innerHTML;
             let originalClass = btn.className;
             
-            btn.innerHTML = "✅ Tersalin!";
+            btn.innerHTML = "✅ Angka & Huruf Tersalin!";
             btn.className = "btn btn-success btn-sm px-4 fw-bold shadow-sm";
             
             setTimeout(() => {
@@ -518,8 +590,8 @@
         updateResultUI(0);
     }
 
-    document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(tab => {
-        tab.addEventListener('shown.bs.tab', function (event) {
+    document.querySelectorAll('button[data-bs-toggle="pill"]').forEach(pill => {
+        pill.addEventListener('shown.bs.tab', function (event) {
             if (event.target.id === 'sidang-tab') hitungSidang();
             if (event.target.id === 'magang-tab') hitungMagang();
         });
