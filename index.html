@@ -209,37 +209,37 @@
                     </div>
 
                     <div class="row align-items-center mb-3 input-row p-1">
-                        <label class="col-sm-5 col-form-label">Penguji 1 (Dosen Pemb.) - 30%</label>
+                        <label class="col-sm-5 col-form-label">Penguji 1 (Dosen Pemb.) - Wajib</label>
                         <div class="col-sm-4">
-                            <input type="number" class="form-control m-input" id="m_p1" data-bobot="0.30" min="0" max="100" placeholder="0 - 100">
+                            <input type="number" class="form-control m-input" id="m_p1" min="0" max="100" placeholder="0 - 100">
                         </div>
                         <div class="col-sm-3 text-end"><span class="text-muted bxn-label" id="bxn_m_p1">BxN: 0.00</span></div>
                     </div>
                     <div class="row align-items-center mb-3 input-row p-1">
-                        <label class="col-sm-5 col-form-label">Penguji 2 (Pemb. Lapangan) - 25%</label>
+                        <label class="col-sm-5 col-form-label">Penguji 2 (Pemb. Lapangan) - Wajib</label>
                         <div class="col-sm-4">
-                            <input type="number" class="form-control m-input" id="m_p2" data-bobot="0.25" min="0" max="100" placeholder="0 - 100">
+                            <input type="number" class="form-control m-input" id="m_p2" min="0" max="100" placeholder="0 - 100">
                         </div>
                         <div class="col-sm-3 text-end"><span class="text-muted bxn-label" id="bxn_m_p2">BxN: 0.00</span></div>
                     </div>
                     <div class="row align-items-center mb-3 input-row p-1">
-                        <label class="col-sm-5 col-form-label">Penguji 3 (Ketua) - 15%</label>
+                        <label class="col-sm-5 col-form-label">Penguji 3 (Ketua) - 45% (Min 2 Hadir)</label>
                         <div class="col-sm-4">
-                            <input type="number" class="form-control m-input" id="m_p3" data-bobot="0.15" min="0" max="100" placeholder="0 - 100">
+                            <input type="number" class="form-control m-input" id="m_p3" min="0" max="100" placeholder="0 - 100">
                         </div>
                         <div class="col-sm-3 text-end"><span class="text-muted bxn-label" id="bxn_m_p3">BxN: 0.00</span></div>
                     </div>
                     <div class="row align-items-center mb-3 input-row p-1">
-                        <label class="col-sm-5 col-form-label">Penguji 4 (Anggota 1) - 15%</label>
+                        <label class="col-sm-5 col-form-label">Penguji 4 (Anggota 1) - 45% (Min 2 Hadir)</label>
                         <div class="col-sm-4">
-                            <input type="number" class="form-control m-input" id="m_p4" data-bobot="0.15" min="0" max="100" placeholder="0 - 100">
+                            <input type="number" class="form-control m-input" id="m_p4" min="0" max="100" placeholder="0 - 100">
                         </div>
                         <div class="col-sm-3 text-end"><span class="text-muted bxn-label" id="bxn_m_p4">BxN: 0.00</span></div>
                     </div>
                     <div class="row align-items-center mb-3 input-row p-1">
-                        <label class="col-sm-5 col-form-label">Penguji 5 (Anggota 2) - 15%</label>
+                        <label class="col-sm-5 col-form-label">Penguji 5 (Anggota 2) - 45% (Min 2 Hadir)</label>
                         <div class="col-sm-4">
-                            <input type="number" class="form-control m-input" id="m_p5" data-bobot="0.15" min="0" max="100" placeholder="0 - 100">
+                            <input type="number" class="form-control m-input" id="m_p5" min="0" max="100" placeholder="0 - 100">
                         </div>
                         <div class="col-sm-3 text-end"><span class="text-muted bxn-label" id="bxn_m_p5">BxN: 0.00</span></div>
                     </div>
@@ -471,27 +471,78 @@
     }
 
     function hitungMagang() {
-        let magang_inputs = document.querySelectorAll('.m-input');
-        let totalScore = 0;
-        let totalBobotHadir = 0;
+        // Ambil elemen input
+        let p1 = document.getElementById('m_p1'); // Dosen Pemb.
+        let p2 = document.getElementById('m_p2'); // Pemb. Lapangan
+        let p3 = document.getElementById('m_p3'); // Ketua
+        let p4 = document.getElementById('m_p4'); // Anggota 1
+        let p5 = document.getElementById('m_p5'); // Anggota 2
 
-        magang_inputs.forEach(input => {
-            if (input.value !== '') totalBobotHadir += parseFloat(input.getAttribute('data-bobot'));
-        });
-
-        magang_inputs.forEach(input => {
+        let allMagang = [p1, p2, p3, p4, p5];
+        
+        // Reset tampilan label menjadi "Tidak Hadir" jika kosong
+        allMagang.forEach(input => {
             let label = document.getElementById(`bxn_${input.id}`);
-            if (input.value !== '') {
-                let bxn = parseFloat(input.value) * (parseFloat(input.getAttribute('data-bobot')) / totalBobotHadir);
-                totalScore += bxn;
-                label.innerHTML = `<span class="text-success">BxN: ${bxn.toFixed(2)}</span>`;
-                label.setAttribute('data-val', bxn.toFixed(2)); 
-            } else {
+            if (input.value === '') {
                 label.innerHTML = `<span class="text-danger small">Tidak Hadir</span>`;
                 label.setAttribute('data-val', '');
             }
         });
 
+        // Cek status kehadiran
+        let isP1Hadir = p1.value !== '';
+        let isP2Hadir = p2.value !== '';
+        
+        // Kumpulkan penguji (komisi 3,4,5) yang hadir
+        let pengujiHadir = [];
+        if (p3.value !== '') pengujiHadir.push(p3);
+        if (p4.value !== '') pengujiHadir.push(p4);
+        if (p5.value !== '') pengujiHadir.push(p5);
+
+        // 1. CEK SYARAT KUORUM
+        // P1 Wajib, P2 Wajib, dan minimal 2 penguji (dari p3,p4,p5) hadir
+        if (!isP1Hadir || !isP2Hadir || pengujiHadir.length < 2) {
+            updateResultUI(0);
+            
+            // Tampilkan pesan peringatan di UI hasil akhir
+            let hurufEl = document.getElementById('hurufAkhir');
+            hurufEl.innerText = 'TDK KUORUM';
+            hurufEl.className = 'display-6 fw-bold text-danger mb-0 mt-3'; // Perkecil teks sedikit agar muat
+            
+            let mobileHurufEl = document.getElementById('mobileHurufAkhir');
+            mobileHurufEl.innerText = 'TDK KUORUM';
+            mobileHurufEl.className = 'fs-3 fw-bold text-danger';
+            
+            return; // Hentikan perhitungan
+        }
+
+        // 2. JIKA KUORUM TERPENUHI, LAKUKAN PERHITUNGAN
+        let totalScore = 0;
+
+        // Hitung P1 (Bobot Mutlak 30%)
+        let bxnP1 = parseFloat(p1.value) * 0.30;
+        totalScore += bxnP1;
+        document.getElementById('bxn_m_p1').innerHTML = `<span class="text-success">BxN: ${bxnP1.toFixed(2)}</span>`;
+        document.getElementById('bxn_m_p1').setAttribute('data-val', bxnP1.toFixed(2));
+
+        // Hitung P2 (Bobot Mutlak 25%)
+        let bxnP2 = parseFloat(p2.value) * 0.25;
+        totalScore += bxnP2;
+        document.getElementById('bxn_m_p2').innerHTML = `<span class="text-success">BxN: ${bxnP2.toFixed(2)}</span>`;
+        document.getElementById('bxn_m_p2').setAttribute('data-val', bxnP2.toFixed(2));
+
+        // Hitung Komisi Penguji P3, P4, P5 (Total Bobot 45% dibagi jumlah yang hadir)
+        let bobotKomisiPenguji = 0.45 / pengujiHadir.length; 
+        
+        pengujiHadir.forEach(p => {
+            let bxn = parseFloat(p.value) * bobotKomisiPenguji;
+            totalScore += bxn;
+            let label = document.getElementById(`bxn_${p.id}`);
+            label.innerHTML = `<span class="text-success">BxN: ${bxn.toFixed(2)}</span>`;
+            label.setAttribute('data-val', bxn.toFixed(2));
+        });
+
+        // Update UI dengan total nilai
         updateResultUI(totalScore);
     }
 
