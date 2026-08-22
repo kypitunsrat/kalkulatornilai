@@ -127,7 +127,7 @@
                 <!-- TAB 1: UJIAN SKRIPSI/TUGAS Akhir -->
                 <div class="tab-pane fade show active" id="sidang">
                     <div class="border-bottom pb-2 mb-3 mt-2">
-                        <h5 class="text-primary mb-0">Kelompok 1 (Ketua & Sekretaris) - 65%</h5>
+                        <h5 class="text-primary mb-0">Kelompok 1 (Ketua & Sekretaris) - 65% (Min 1 Hadir)</h5>
                     </div>
                     
                     <div class="row align-items-center mb-3 input-row p-1">
@@ -155,7 +155,7 @@
                     </div>
 
                     <div class="border-bottom pb-2 mb-3 mt-4">
-                        <h5 class="text-primary mb-0">Kelompok 2 (Anggota) - 35%</h5>
+                        <h5 class="text-primary mb-0">Kelompok 2 (Anggota) - 35% (Min 2 Hadir)</h5>
                     </div>
 
                     <div class="row align-items-center mb-3 input-row p-1">
@@ -209,14 +209,14 @@
                     </div>
 
                     <div class="row align-items-center mb-3 input-row p-1">
-                        <label class="col-sm-5 col-form-label">Penguji 1 (Dosen Pemb.) - Wajib</label>
+                        <label class="col-sm-5 col-form-label">Penguji 1 (Dosen Pemb.) - Wajib (30%)</label>
                         <div class="col-sm-4">
                             <input type="number" class="form-control m-input" id="m_p1" min="0" max="100" placeholder="0 - 100">
                         </div>
                         <div class="col-sm-3 text-end"><span class="text-muted bxn-label" id="bxn_m_p1">BxN: 0.00</span></div>
                     </div>
                     <div class="row align-items-center mb-3 input-row p-1">
-                        <label class="col-sm-5 col-form-label">Penguji 2 (Pemb. Lapangan) - Wajib</label>
+                        <label class="col-sm-5 col-form-label">Penguji 2 (Pemb. Lapangan) - Wajib (25%)</label>
                         <div class="col-sm-4">
                             <input type="number" class="form-control m-input" id="m_p2" min="0" max="100" placeholder="0 - 100">
                         </div>
@@ -414,49 +414,67 @@
     }
 
     function hitungSidang() {
-        let k1_inputs = [document.getElementById('s_p1'), document.getElementById('s_p2')];
-        let k2_inputs = [document.getElementById('s_p3'), document.getElementById('s_p4'), document.getElementById('s_p5')];
+        let p1 = document.getElementById('s_p1'); // Ketua
+        let p2 = document.getElementById('s_p2'); // Sekretaris
+        let p3 = document.getElementById('s_p3'); // Anggota 1
+        let p4 = document.getElementById('s_p4'); // Anggota 2
+        let p5 = document.getElementById('s_p5'); // Anggota 3
+
+        let k1_inputs = [p1, p2];
+        let k2_inputs = [p3, p4, p5];
         
-        let k1_vals = k1_inputs.map(el => el.value !== '' ? parseFloat(el.value) : null).filter(v => v !== null);
-        let k2_vals = k2_inputs.map(el => el.value !== '' ? parseFloat(el.value) : null).filter(v => v !== null);
+        let k1_hadir = k1_inputs.filter(el => el.value !== '');
+        let k2_hadir = k2_inputs.filter(el => el.value !== '');
 
-        let bobot_total_k1 = 0.65;
-        let bobot_total_k2 = 0.35;
+        // Reset label menjadi Tidak Hadir jika kosong
+        [...k1_inputs, ...k2_inputs].forEach(input => {
+            let label = document.getElementById(`bxn_${input.id}`);
+            if (input.value === '') {
+                label.innerHTML = `<span class="text-danger small">Tidak Hadir</span>`;
+            }
+        });
 
-        if (k1_vals.length === 0 && k2_vals.length > 0) bobot_total_k2 = 1.0; 
-        else if (k2_vals.length === 0 && k1_vals.length > 0) bobot_total_k1 = 1.0; 
-        else if (k1_vals.length === 0 && k2_vals.length === 0) {
-            bobot_total_k1 = 0;
-            bobot_total_k2 = 0;
+        // 1. CEK SYARAT KUORUM UJIAN SKRIPSI
+        // Minimal 1 orang dari Kelompok 1 hadir, dan Minimal 2 orang dari Kelompok 2 hadir
+        if (k1_hadir.length < 1 || k2_hadir.length < 2) {
+            document.getElementById('subtotal_k1').innerText = `Total BxN Kelompok 1: 0.00`;
+            document.getElementById('subtotal_k2').innerText = `Total BxN Kelompok 2: 0.00`;
+            
+            updateResultUI(0);
+            
+            // Tampilkan pesan TDK KUORUM
+            document.getElementById('hurufAkhir').innerText = 'TDK KUORUM';
+            document.getElementById('hurufAkhir').className = 'display-6 fw-bold text-danger mb-0 mt-3';
+            document.getElementById('mobileHurufAkhir').innerText = 'TDK KUORUM';
+            document.getElementById('mobileHurufAkhir').className = 'fs-3 fw-bold text-danger';
+            return;
         }
 
-        let bobot_k1_per_orang = k1_vals.length > 0 ? (bobot_total_k1 / k1_vals.length) : 0;
-        let bobot_k2_per_orang = k2_vals.length > 0 ? (bobot_total_k2 / k2_vals.length) : 0;
+        // 2. PERHITUNGAN JIKA KUORUM
+        // Kelompok 1 total 65% dibagi jumlah yang hadir di Kelompok 1
+        let bobot_k1_per_orang = 0.65 / k1_hadir.length;
+        // Kelompok 2 total 35% dibagi jumlah yang hadir di Kelompok 2
+        let bobot_k2_per_orang = 0.35 / k2_hadir.length;
 
         let sumK1 = 0;
         k1_inputs.forEach(el => {
-            let label = document.getElementById(`bxn_${el.id}`);
             if (el.value !== '') {
                 let bxn = parseFloat(el.value) * bobot_k1_per_orang;
                 sumK1 += bxn;
-                label.innerHTML = `<span class="text-primary">BxN: ${bxn.toFixed(2)}</span>`;
-            } else {
-                label.innerHTML = `<span class="text-danger small">Tidak Hadir</span>`;
+                document.getElementById(`bxn_${el.id}`).innerHTML = `<span class="text-primary">BxN: ${bxn.toFixed(2)}</span>`;
             }
         });
 
         let sumK2 = 0;
         k2_inputs.forEach(el => {
-            let label = document.getElementById(`bxn_${el.id}`);
             if (el.value !== '') {
                 let bxn = parseFloat(el.value) * bobot_k2_per_orang;
                 sumK2 += bxn;
-                label.innerHTML = `<span class="text-primary">BxN: ${bxn.toFixed(2)}</span>`;
-            } else {
-                label.innerHTML = `<span class="text-danger small">Tidak Hadir</span>`;
+                document.getElementById(`bxn_${el.id}`).innerHTML = `<span class="text-primary">BxN: ${bxn.toFixed(2)}</span>`;
             }
         });
 
+        // Update Text Subtotal
         let sub1El = document.getElementById('subtotal_k1');
         let sub2El = document.getElementById('subtotal_k2');
         
@@ -507,7 +525,7 @@
             // Tampilkan pesan peringatan di UI hasil akhir
             let hurufEl = document.getElementById('hurufAkhir');
             hurufEl.innerText = 'TDK KUORUM';
-            hurufEl.className = 'display-6 fw-bold text-danger mb-0 mt-3'; // Perkecil teks sedikit agar muat
+            hurufEl.className = 'display-6 fw-bold text-danger mb-0 mt-3'; 
             
             let mobileHurufEl = document.getElementById('mobileHurufAkhir');
             mobileHurufEl.innerText = 'TDK KUORUM';
