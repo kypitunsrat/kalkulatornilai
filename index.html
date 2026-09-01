@@ -1,744 +1,437 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalkulator Penilaian Teknik Informatika</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body { background-color: #f4f6f9; }
-        
-        ::placeholder {
-            opacity: 0.4 !important; 
-            font-style: italic;      
-            font-size: 0.9rem;
-        }
-
-        .input-row {
-            transition: background-color 0.2s ease;
-            border-radius: 6px;
-        }
-        .input-row:hover {
-            background-color: #f8f9fa; 
-        }
-        
-        .result-box {
-            position: sticky;
-            top: 20px;
-            background: white;
-            border-left: 5px solid #0d6efd;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        
-        #hurufAkhir, #angkaAkhir {
-            transition: all 0.3s ease;
-        }
-
-        .bxn-label {
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-        
-        .subtotal-badge {
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-
-        .btn-copy-small {
-            font-size: 0.75rem;
-            padding: 0.15rem 0.5rem;
-            transition: all 0.2s;
-        }
-
-        /* KHUSUS MOBILE: Desain Bar Melayang di bawah */
-        .mobile-floating-result {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: white;
-            border-top: 4px solid #0d6efd;
-            padding: 10px 20px;
-            z-index: 1050;
-            box-shadow: 0 -4px 15px rgba(0,0,0,0.15);
-        }
-
-        @media (max-width: 991px) {
-            body { padding-bottom: 90px; }
-        }
-
-        /* DESAIN TOGGLE MODERN (SEGMENTED CONTROL iOS STYLE) */
-        .modern-segment {
-            background-color: #e3e6eb; /* Warna rel abu-abu terang */
-            border-radius: 50px;       /* Bentuk pil membulat */
-            padding: 6px;
-            box-shadow: inset 0 2px 6px rgba(0,0,0,0.06); /* Efek cekung ke dalam */
-            display: flex;
-            margin-bottom: 25px;
-        }
-        .modern-segment .nav-item {
-            flex: 1;
-        }
-        .modern-segment .nav-link {
-            border-radius: 50px;
-            font-weight: 700;
-            color: #6c757d;
-            border: none;
-            padding: 12px 10px;
-            font-size: 0.95rem;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Animasi halus iOS */
-        }
-        .modern-segment .nav-link:hover:not(.active) {
-            color: #495057;
-        }
-        .modern-segment .nav-link.active {
-            background-color: #ffffff;
-            color: #0d6efd;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* Efek melayang */
-            transform: scale(1.02); /* Efek tombol sedikit membesar/timbul */
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kalkulator Penilaian Akademik 2026</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    :root{
+      --brand:#0d6efd;
+      --brand-2:#5b8def;
+      --ink:#1f2937;
+      --muted:#6b7280;
+      --soft:#f4f6f9;
+      --ok:#198754;
+      --warn:#f0ad4e;
+      --danger:#dc3545;
+    }
+    body{background:var(--soft); color:var(--ink);}
+    ::placeholder{opacity:.45!important;font-style:italic;font-size:.9rem;}
+    .app-header{background:linear-gradient(135deg,#0d6efd,#5b8def);color:#fff;border-radius:18px;padding:22px 24px;box-shadow:0 10px 30px rgba(13,110,253,.18)}
+    .tab-shell,.result-box{background:#fff;border:1px solid #e5e7eb;border-radius:16px;box-shadow:0 6px 18px rgba(31,41,55,.06)}
+    .result-box{position:sticky;top:18px;border-left:5px solid var(--brand)}
+    .input-row{transition:.18s ease;border-radius:10px;padding:10px 8px;margin-bottom:8px;border:1px solid transparent}
+    .input-row:hover{background:#f8fafc;border-color:#eef2f7}
+    .input-row.absent{opacity:.55;background:#f8f9fa}
+    .modern-segment{background:#e9edf3;border-radius:999px;padding:6px;display:flex;margin-bottom:18px;box-shadow:inset 0 2px 6px rgba(0,0,0,.05)}
+    .modern-segment .nav-item{flex:1}.modern-segment .nav-link{border-radius:999px;font-weight:700;color:#6c757d;border:0;padding:11px 10px}.modern-segment .nav-link.active{background:#fff;color:var(--brand);box-shadow:0 4px 14px rgba(0,0,0,.08)}
+    .presence-pill{font-size:.78rem;font-weight:700;min-width:92px}
+    .weight-badge{font-size:.78rem;font-weight:700;min-width:90px}
+    .bxn-label{font-size:.82rem;font-weight:600;white-space:nowrap}
+    .status-card{border-radius:12px;padding:12px 14px;border:1px solid #e5e7eb;background:#fafafa}
+    .status-card.ok{background:#ecfdf3;border-color:#b7ebc8}.status-card.warn{background:#fff8e8;border-color:#ffe0a3}.status-card.bad{background:#fff0f0;border-color:#ffc6cc}
+    .grade-big{font-size:4.5rem;line-height:1;font-weight:800}
+    .score-big{font-size:1.65rem;font-weight:800}
+    .quorum-chip{display:inline-flex;gap:6px;align-items:center;padding:5px 9px;border-radius:999px;background:#f1f5f9;font-size:.78rem;font-weight:700;margin:2px}
+    .copy-btn{font-size:.78rem}
+    .rule-box{font-size:.82rem;line-height:1.5;background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;padding:12px}
+    .mobile-floating-result{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:4px solid var(--brand);padding:10px 16px;z-index:1050;box-shadow:0 -4px 15px rgba(0,0,0,.15)}
+    .locked-overlay{border:1px dashed #6c757d;background:#f8f9fa;border-radius:10px;padding:8px 12px;font-size:.85rem;color:#495057}
+    .version{font-size:.75rem;color:#94a3b8}
+    @media(max-width:991px){body{padding-bottom:92px}.result-box{position:static}}
+    @media print{
+      body{background:#fff!important;padding:0!important}
+      .no-print,.modern-segment,.mobile-floating-result,.btn,.form-switch{display:none!important}
+      .app-header{background:#fff!important;color:#000!important;box-shadow:none;border:1px solid #ddd}
+      .tab-shell,.result-box{box-shadow:none!important;border:1px solid #ddd!important}
+      .col-lg-8,.col-lg-4{width:100%!important}
+      .result-box{position:static!important;margin-top:14px}
+      .tab-pane{display:block!important;opacity:1!important}
+      #magang{page-break-before:always}
+    }
+  </style>
 </head>
 <body>
-
 <div class="container py-4">
-    <div class="text-center mb-4">
-        <h2 class="fw-bold">Kalkulator Penilaian Akademik</h2>
-        <h5 class="text-secondary">Teknik Informatika - Universitas Sam Ratulangi</h5>
+  <div class="app-header mb-3">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
+      <div>
+        <h2 class="fw-bold mb-1">Kalkulator Penilaian Akademik</h2>
+        <div>Teknik Informatika - Universitas Sam Ratulangi</div>
+      </div>
+      <div class="text-md-end small">
+        <div class="fw-bold">Ruleset Penilaian 2026</div>
+        <div>Peraturan Rektor Nomor 3 Tahun 2026</div>
+        <div class="mt-2"><span class="badge bg-light text-primary border border-light">💾 Auto-save nilai & kehadiran aktif</span></div>
+      </div>
     </div>
+  </div>
 
-    <div class="row">
-        <!-- Kolom Form (Kiri) -->
-        <div class="col-lg-8 mb-4">
-            
-            <!-- NAVIGASI TOGGLE MODERN -->
-            <ul class="nav nav-pills modern-segment" id="pills-tab" role="tablist">
-                <li class="nav-item text-center" role="presentation">
-                    <button class="nav-link active w-100" id="sidang-tab" data-bs-toggle="pill" data-bs-target="#sidang" type="button">Ujian Skripsi</button>
-                </li>
-                <li class="nav-item text-center" role="presentation">
-                    <button class="nav-link w-100" id="magang-tab" data-bs-toggle="pill" data-bs-target="#magang" type="button">Seminar Magang</button>
-                </li>
-            </ul>
+  <div class="alert alert-light border shadow-sm small text-muted mb-3 no-print">
+    <strong>Alur cepat:</strong> atur kehadiran → isi nilai → cek kuorum → finalisasi → copy ke berita acara Word. Data sementara tersimpan otomatis di browser.
+  </div>
 
-            <!-- Tambahan border-top agar tidak terlihat menyambung seperti tab -->
-            <div class="tab-content bg-white p-4 shadow-sm rounded border border-top" id="pills-tabContent">
-                
-                <!-- TAB 1: UJIAN SKRIPSI/TUGAS Akhir -->
-                <div class="tab-pane fade show active" id="sidang">
-                    <div class="border-bottom pb-2 mb-3 mt-2">
-                        <h5 class="text-primary mb-0">Kelompok 1 (Ketua & Sekretaris) - 65%</h5>
-                    </div>
-                    
-                    <div class="row align-items-center mb-3 input-row p-1">
-                        <label class="col-sm-5 col-form-label fw-medium" id="label_s_p1">Penguji 1 (Ketua)</label>
-                        <div class="col-sm-4">
-                            <input type="number" class="form-control s-input" id="s_p1" min="0" max="100" placeholder="0 - 100">
-                        </div>
-                        <div class="col-sm-3 text-end">
-                            <span class="text-muted bxn-label" id="bxn_s_p1">BxN: 0.00</span>
-                        </div>
-                    </div>
-                    <div class="row align-items-center mb-2 input-row p-1">
-                        <label class="col-sm-5 col-form-label fw-medium" id="label_s_p2">Penguji 2 (Sekretaris)</label>
-                        <div class="col-sm-4">
-                            <input type="number" class="form-control s-input" id="s_p2" min="0" max="100" placeholder="0 - 100">
-                        </div>
-                        <div class="col-sm-3 text-end">
-                            <span class="text-muted bxn-label" id="bxn_s_p2">BxN: 0.00</span>
-                        </div>
-                    </div>
-                    
-                    <div class="text-end mb-4 pb-2 border-bottom">
-                        <span class="badge bg-light text-primary border border-primary subtotal-badge" id="subtotal_k1" data-val="0.00">Total BxN Kelompok 1: 0.00</span>
-                        <button class="btn btn-outline-primary btn-copy-small ms-2 fw-bold" onclick="copySingleValue('subtotal_k1', this)">📋 Copy</button>
-                    </div>
+  <div class="row g-3">
+    <div class="col-lg-8">
+      <ul class="nav nav-pills modern-segment no-print" id="pills-tab" role="tablist">
+        <li class="nav-item text-center"><button class="nav-link active w-100" id="sidang-tab" data-bs-toggle="pill" data-bs-target="#sidang" type="button">Ujian Skripsi</button></li>
+        <li class="nav-item text-center"><button class="nav-link w-100" id="magang-tab" data-bs-toggle="pill" data-bs-target="#magang" type="button">Seminar Magang</button></li>
+      </ul>
 
-                    <div class="border-bottom pb-2 mb-3 mt-4">
-                        <h5 class="text-primary mb-0">Kelompok 2 (Anggota) - 35%</h5>
-                    </div>
-
-                    <div class="row align-items-center mb-3 input-row p-1">
-                        <label class="col-sm-5 col-form-label fw-medium" id="label_s_p3">Penguji 3 (Anggota)</label>
-                        <div class="col-sm-4">
-                            <input type="number" class="form-control s-input" id="s_p3" min="0" max="100" placeholder="0 - 100">
-                        </div>
-                        <div class="col-sm-3 text-end">
-                            <span class="text-muted bxn-label" id="bxn_s_p3">BxN: 0.00</span>
-                        </div>
-                    </div>
-                    <div class="row align-items-center mb-3 input-row p-1">
-                        <label class="col-sm-5 col-form-label fw-medium" id="label_s_p4">Penguji 4 (Anggota)</label>
-                        <div class="col-sm-4">
-                            <input type="number" class="form-control s-input" id="s_p4" min="0" max="100" placeholder="0 - 100">
-                        </div>
-                        <div class="col-sm-3 text-end">
-                            <span class="text-muted bxn-label" id="bxn_s_p4">BxN: 0.00</span>
-                        </div>
-                    </div>
-                    <div class="row align-items-center mb-2 input-row p-1">
-                        <label class="col-sm-5 col-form-label fw-medium" id="label_s_p5">Penguji 5 (Anggota)</label>
-                        <div class="col-sm-4">
-                            <input type="number" class="form-control s-input" id="s_p5" min="0" max="100" placeholder="0 - 100">
-                        </div>
-                        <div class="col-sm-3 text-end">
-                            <span class="text-muted bxn-label" id="bxn_s_p5">BxN: 0.00</span>
-                        </div>
-                    </div>
-
-                    <div class="text-end mb-2">
-                        <span class="badge bg-light text-primary border border-primary subtotal-badge" id="subtotal_k2" data-val="0.00">Total BxN Kelompok 2: 0.00</span>
-                        <button class="btn btn-outline-primary btn-copy-small ms-2 fw-bold" onclick="copySingleValue('subtotal_k2', this)">📋 Copy</button>
-                    </div>
-                    
-                    <div class="mt-4 pt-3 border-top">
-                        <button class="btn btn-sm btn-outline-success w-100 fw-bold shadow-sm" onclick="copySidangColumn('nilai', this)">📋 Copy Kolom "Nilai (N)" Saja (5 Baris)</button>
-                        <div class="alert alert-light border small text-start mt-2 mb-0 text-muted">
-                            💡 <strong>Cara Paste Kolom Nilai (N):</strong><br>
-                            Blok 5 sel kosong ke bawah di kolom 'Nilai (N)' tabel Word, lalu tekan Ctrl+V.
-                        </div>
-                    </div>
-                </div>
-
-                <!-- TAB 2: SEMINAR MAGANG -->
-                <div class="tab-pane fade" id="magang">
-                    <div class="row align-items-center mb-3 border-bottom pb-2 mt-2 d-none d-md-flex">
-                        <div class="col-sm-5 fw-bold text-primary">Komisi Penguji</div>
-                        <div class="col-sm-4 fw-bold text-primary">Nilai (0-100)</div>
-                        <div class="col-sm-3 text-end fw-bold text-primary">Hasil (BxN)</div>
-                    </div>
-
-                    <div class="row align-items-center mb-3 input-row p-1">
-                        <label class="col-sm-5 col-form-label fw-medium" id="label_m_p1">Penguji 1 (Dosen Pemb.)</label>
-                        <div class="col-sm-4">
-                            <input type="number" class="form-control m-input" id="m_p1" min="0" max="100" placeholder="0 - 100">
-                        </div>
-                        <div class="col-sm-3 text-end"><span class="text-muted bxn-label" id="bxn_m_p1">BxN: 0.00</span></div>
-                    </div>
-                    <div class="row align-items-center mb-3 input-row p-1">
-                        <label class="col-sm-5 col-form-label fw-medium" id="label_m_p2">Penguji 2 (Pemb. Lapangan)</label>
-                        <div class="col-sm-4">
-                            <input type="number" class="form-control m-input" id="m_p2" min="0" max="100" placeholder="0 - 100">
-                        </div>
-                        <div class="col-sm-3 text-end"><span class="text-muted bxn-label" id="bxn_m_p2">BxN: 0.00</span></div>
-                    </div>
-                    <div class="row align-items-center mb-3 input-row p-1">
-                        <label class="col-sm-5 col-form-label fw-medium" id="label_m_p3">Penguji 3 (Ketua)</label>
-                        <div class="col-sm-4">
-                            <input type="number" class="form-control m-input" id="m_p3" min="0" max="100" placeholder="0 - 100">
-                        </div>
-                        <div class="col-sm-3 text-end"><span class="text-muted bxn-label" id="bxn_m_p3">BxN: 0.00</span></div>
-                    </div>
-                    <div class="row align-items-center mb-3 input-row p-1">
-                        <label class="col-sm-5 col-form-label fw-medium" id="label_m_p4">Penguji 4 (Anggota 1)</label>
-                        <div class="col-sm-4">
-                            <input type="number" class="form-control m-input" id="m_p4" min="0" max="100" placeholder="0 - 100">
-                        </div>
-                        <div class="col-sm-3 text-end"><span class="text-muted bxn-label" id="bxn_m_p4">BxN: 0.00</span></div>
-                    </div>
-                    <div class="row align-items-center mb-3 input-row p-1">
-                        <label class="col-sm-5 col-form-label fw-medium" id="label_m_p5">Penguji 5 (Anggota 2)</label>
-                        <div class="col-sm-4">
-                            <input type="number" class="form-control m-input" id="m_p5" min="0" max="100" placeholder="0 - 100">
-                        </div>
-                        <div class="col-sm-3 text-end"><span class="text-muted bxn-label" id="bxn_m_p5">BxN: 0.00</span></div>
-                    </div>
-                    
-                    <div class="mt-4 pt-3 border-top">
-                        <div class="row g-2">
-                            <div class="col-sm-6">
-                                <button class="btn btn-sm btn-outline-success w-100 fw-bold shadow-sm" onclick="copyMagangColumn('nilai', this)">📋 Copy Kolom "Nilai (N)" Saja (5 Baris)</button>
-                            </div>
-                            <div class="col-sm-6">
-                                <button class="btn btn-sm btn-outline-primary w-100 fw-bold shadow-sm" onclick="copyMagangColumn('bxn', this)">📋 Copy Kolom "B x N" Saja (5 Baris)</button>
-                            </div>
-                        </div>
-                        <div class="alert alert-light border small text-start mt-2 mb-0 text-muted">
-                            💡 <strong>Cara Paste Seminar Magang:</strong><br>
-                            Blok 5 sel kosong ke bawah pada masing-masing kolom yang dituju di Word, lalu tekan Ctrl+V.<br>
-                            <em>(Untuk Total Angka & Huruf, gunakan tombol di panel sebelah kanan/bawah)</em>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mt-4 pt-3 border-top text-end">
-                    <button class="btn btn-outline-danger me-2 fw-bold" onclick="if(confirm('Yakin ingin mengosongkan semua isian nilai?')) resetForm()">Bersihkan Form</button>
-                    <button class="btn btn-outline-primary fw-bold" onclick="window.print()">Cetak Halaman</button>
-                </div>
+      <div class="tab-shell p-3 p-md-4">
+        <div class="tab-content" id="pills-tabContent">
+          <div class="tab-pane fade show active" id="sidang">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center border-bottom pb-2 mb-3">
+              <div>
+                <h5 class="text-primary mb-1">Ujian Skripsi</h5>
+                <div class="small text-muted">Kuorum: ≥1 Ketua/Sekretaris, ≥2 Anggota, dan total minimal 4 orang.</div>
+              </div>
+              <div id="sidang_quorum_summary" class="mt-2 mt-md-0"></div>
             </div>
+
+            <div class="mb-2"><span class="badge bg-primary">Kelompok 1</span> <strong>Ketua & Sekretaris — total bobot 65%</strong></div>
+            <div id="sidang_group1"></div>
+            <div class="d-flex justify-content-end mb-4"><span class="badge bg-light text-primary border border-primary" id="subtotal_k1" data-val="0.00">Total BxN Kelompok 1: 0.00</span><button class="btn btn-outline-primary btn-sm ms-2 copy-btn no-print" onclick="copySingleValue('subtotal_k1',this)">📋 Copy</button></div>
+
+            <div class="mb-2"><span class="badge bg-primary">Kelompok 2</span> <strong>Anggota — total bobot 35%</strong></div>
+            <div id="sidang_group2"></div>
+            <div class="d-flex justify-content-end mb-3"><span class="badge bg-light text-primary border border-primary" id="subtotal_k2" data-val="0.00">Total BxN Kelompok 2: 0.00</span><button class="btn btn-outline-primary btn-sm ms-2 copy-btn no-print" onclick="copySingleValue('subtotal_k2',this)">📋 Copy</button></div>
+
+            <div class="border-top pt-3 no-print">
+              <button class="btn btn-sm btn-outline-success w-100 fw-bold" onclick="copySidangColumn('nilai',this)">📋 Copy Kolom Nilai (N) — 5 Baris</button>
+              <div class="alert alert-light border small text-muted mt-2 mb-0">Blok 5 sel kosong ke bawah di tabel Word, lalu Ctrl+V. Penguji yang ditandai Tidak Hadir akan dikosongkan.</div>
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="magang">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center border-bottom pb-2 mb-3">
+              <div>
+                <h5 class="text-primary mb-1">Seminar Magang</h5>
+                <div class="small text-muted">Kuorum: Dosen Pembimbing wajib hadir, Pembimbing Lapangan wajib hadir, dan minimal 2 dari 3 penguji hadir.</div>
+              </div>
+              <div id="magang_quorum_summary" class="mt-2 mt-md-0"></div>
+            </div>
+            <div id="magang_rows"></div>
+            <div class="row g-2 border-top pt-3 no-print">
+              <div class="col-md-6"><button class="btn btn-sm btn-outline-success w-100 fw-bold" onclick="copyMagangColumn('nilai',this)">📋 Copy Kolom Nilai (N)</button></div>
+              <div class="col-md-6"><button class="btn btn-sm btn-outline-primary w-100 fw-bold" onclick="copyMagangColumn('bxn',this)">📋 Copy Kolom B × N</button></div>
+              <div class="col-12"><div class="alert alert-light border small text-muted mb-0">Blok 5 sel ke bawah pada kolom yang sesuai di berita acara Word, lalu Ctrl+V. Penilai Tidak Hadir akan menjadi sel kosong.</div></div>
+            </div>
+          </div>
         </div>
 
-        <!-- Kolom Hasil (Kanan - Sticky PC) -->
-        <div class="col-lg-4">
-            <div class="result-box p-4 rounded text-center">
-                <h5 class="text-secondary mb-3">Hasil Evaluasi Akhir</h5>
-                
-                <h1 class="display-2 fw-bold text-muted mb-0" id="hurufAkhir">-</h1>
-                
-                <p class="fs-4 mb-3 mt-2">
-                    Angka: <strong id="angkaAkhir" data-val="0.00">0.00</strong>
-                </p>
-                
-                <button class="btn btn-primary btn-sm px-4 fw-bold shadow-sm" onclick="copyHasilAkhir(this)">
-                    📋 Copy Angka & Huruf Saja
-                </button>
-                
-                <div class="alert alert-light border small text-start mt-3 mb-0 text-muted">
-                    💡 <strong>Cara Paste Angka & Huruf:</strong><br>
-                    Blok 2 sel ke bawah (Total Angka & Huruf) di tabel Word, lalu tekan Ctrl+V.
-                </div>
+        <div class="mt-4 pt-3 border-top d-flex flex-wrap gap-2 no-print">
+          <button class="btn btn-outline-danger fw-bold" onclick="resetForm(true)">Bersihkan Form</button>
+          <button class="btn btn-outline-secondary fw-bold" onclick="window.print()">Cetak Ringkasan</button>
+          <button class="btn btn-outline-dark fw-bold" onclick="startNewSession()">Mulai Penilaian Baru</button>
+        </div>
+      </div>
+    </div>
 
-                <hr class="mt-4">
-                <div class="text-start small text-muted mt-3">
-                    <strong>Ketentuan Peraturan Rektor No 01 2025 Pasal 59:</strong><br>
-                    <span class="badge bg-success">A (≥80)</span>
-                    <span class="badge bg-primary">B+ (75-79)</span>
-                    <span class="badge bg-info">B (70-74)</span>
-                    <span class="badge bg-warning text-dark">C+ (65-69)</span>
-                    <span class="badge bg-secondary">C (60-64)</span>
-                    <span class="badge bg-danger">D (55-59)</span>
-                    <span class="badge bg-dark">E (<55)</span>
-                </div>
-            </div>
+    <div class="col-lg-4">
+      <div class="result-box p-4">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h5 class="text-secondary mb-0">Hasil Evaluasi</h5>
+          <span id="lock_badge" class="badge bg-light text-secondary border">Editable</span>
         </div>
 
+        <div id="status_card" class="status-card warn mb-3">
+          <div class="fw-bold" id="status_title">BELUM LENGKAP</div>
+          <div class="small" id="status_detail">Masukkan nilai seluruh penilai yang hadir.</div>
+        </div>
+
+        <div class="text-center">
+          <div id="hurufAkhir" class="grade-big text-muted">-</div>
+          <div class="mt-2">Angka: <span id="angkaAkhir" class="score-big" data-val="">—</span></div>
+          <div class="small text-muted mt-1" id="progress_text">0 / 0 nilai terisi</div>
+        </div>
+
+        <div class="mt-3 d-grid gap-2 no-print">
+          <button class="btn btn-primary btn-sm fw-bold" onclick="copyHasilAkhir(this)">📋 Copy Angka & Huruf</button>
+          <button id="finalize_btn" class="btn btn-success btn-sm fw-bold" onclick="finalizeResult()">🔒 Finalisasi Hasil</button>
+          <button id="unlock_btn" class="btn btn-outline-warning btn-sm fw-bold d-none" onclick="unlockResult()">🔓 Buka Kunci</button>
+        </div>
+
+        <div id="locked_note" class="locked-overlay mt-3 d-none">Hasil telah difinalisasi. Input dikunci untuk mencegah perubahan tidak sengaja.</div>
+
+        <hr>
+        <div class="small fw-bold mb-1">Status Kuorum & Bobot</div>
+        <div id="quorum_detail" class="small text-muted mb-3"></div>
+
+        <div class="rule-box">
+          <div class="fw-bold mb-1">Konversi Nilai 2026</div>
+          <div><span class="badge bg-success">A ≥ 85</span> <span class="badge bg-primary">B+ 75–84,99</span></div>
+          <div class="mt-1"><span class="badge bg-info text-dark">B 65–74,99</span> <span class="badge bg-warning text-dark">C+ 55–64,99</span></div>
+          <div class="mt-1"><span class="badge bg-secondary">C 45–54,99</span> <span class="badge bg-danger">D 35–44,99</span> <span class="badge bg-dark">E &lt; 35</span></div>
+          <div class="mt-2 text-muted">Bobot huruf: A=4,0; B+=3,5; B=3,0; C+=2,5; C=2,0; D=1,0; E=0.</div>
+        </div>
+        <div class="version text-center mt-3">Academic Grade Calculator v2.2 • Ruleset 2026<br>Helper rekap sementara — data final tetap pada berita acara.</div>
+      </div>
     </div>
+  </div>
 </div>
 
-<!-- KHUSUS MOBILE: FLOATING RESULT BAR DENGAN TOMBOL COPY -->
-<div class="mobile-floating-result d-lg-none">
-    <div class="d-flex justify-content-between align-items-center">
-        <div class="d-flex align-items-center">
-            <div class="me-3">
-                <strong class="display-6 fw-bold text-muted" id="mobileHurufAkhir">-</strong>
-            </div>
-            <div class="lh-sm">
-                <span class="text-muted small fw-bold">Angka:</span><br>
-                <strong class="fs-5" id="mobileAngkaAkhir">0.00</strong>
-            </div>
-        </div>
-        <div>
-            <button class="btn btn-primary btn-sm px-3 py-2 fw-bold shadow-sm" onclick="copyHasilAkhir(this)">
-                📋 Copy
-            </button>
-        </div>
+<div class="mobile-floating-result d-lg-none no-print">
+  <div class="d-flex justify-content-between align-items-center">
+    <div>
+      <div id="mobileStatus" class="small fw-bold text-warning">BELUM LENGKAP</div>
+      <div><strong id="mobileHurufAkhir" class="fs-3 text-muted">-</strong> <span class="text-muted ms-2">Angka:</span> <strong id="mobileAngkaAkhir">—</strong></div>
     </div>
+    <button class="btn btn-primary btn-sm fw-bold" onclick="copyHasilAkhir(this)">📋 Copy</button>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    const inputs = document.querySelectorAll('input[type="number"]');
+  const APP_KEY = 'academic_grade_calc_2026_v22';
+  const RULES = {
+    grading: [
+      {min:85, letter:'A', cls:'text-success'},
+      {min:75, letter:'B+', cls:'text-primary'},
+      {min:65, letter:'B', cls:'text-info'},
+      {min:55, letter:'C+', cls:'text-warning'},
+      {min:45, letter:'C', cls:'text-secondary'},
+      {min:35, letter:'D', cls:'text-danger'},
+      {min:0, letter:'E', cls:'text-dark'}
+    ],
+    sidang: { group1Weight:0.65, group2Weight:0.35, minGroup1:1, minGroup2:2, minTotal:4 },
+    magang: { pembimbingWeight:0.30, lapanganWeight:0.25, pengujiTotalWeight:0.45, minPenguji:2 }
+  };
 
-    inputs.forEach((input, index) => {
-        // Event Listeners Input
-        input.addEventListener('input', function() {
-            if (this.value > 100) this.value = 100;
-            if (this.value < 0) this.value = 0;
-            
-            if (document.getElementById('sidang').classList.contains('active')) {
-                hitungSidang();
-            } else {
-                hitungMagang();
-            }
-        });
+  const sidangPeople = [
+    {id:'s_p1', name:'Penguji 1 (Ketua)', group:1},
+    {id:'s_p2', name:'Penguji 2 (Sekretaris)', group:1},
+    {id:'s_p3', name:'Penguji 3 (Anggota)', group:2},
+    {id:'s_p4', name:'Penguji 4 (Anggota)', group:2},
+    {id:'s_p5', name:'Penguji 5 (Anggota)', group:2}
+  ];
+  const magangPeople = [
+    {id:'m_p1', name:'Penguji 1 (Dosen Pembimbing)', role:'pembimbing'},
+    {id:'m_p2', name:'Penguji 2 (Pembimbing Lapangan)', role:'lapangan'},
+    {id:'m_p3', name:'Penguji 3 (Ketua)', role:'penguji'},
+    {id:'m_p4', name:'Penguji 4 (Anggota 1)', role:'penguji'},
+    {id:'m_p5', name:'Penguji 5 (Anggota 2)', role:'penguji'}
+  ];
 
-        // FUNGSI PRO: Pindah input pakai tombol Enter
-        input.addEventListener('keydown', function(e) {
-            if (e.key === "Enter") {
-                e.preventDefault(); 
-                if (index < inputs.length - 1) {
-                    inputs[index + 1].focus();
-                } else {
-                    input.blur();
-                }
-            }
-        });
+  let appState = {locked:false};
+
+  function renderRows(){
+    const g1 = document.getElementById('sidang_group1');
+    const g2 = document.getElementById('sidang_group2');
+    sidangPeople.forEach(p => (p.group===1?g1:g2).insertAdjacentHTML('beforeend', evaluatorRowHTML(p)));
+    const mr = document.getElementById('magang_rows');
+    magangPeople.forEach(p => mr.insertAdjacentHTML('beforeend', evaluatorRowHTML(p)));
+  }
+
+  function evaluatorRowHTML(p){
+    return `
+      <div class="row align-items-center input-row" id="row_${p.id}">
+        <div class="col-md-4 col-12 mb-2 mb-md-0">
+          <div class="fw-semibold" id="label_${p.id}">${p.name}</div>
+          <div class="small text-muted"><span class="weight-badge badge bg-light text-primary border" id="weight_${p.id}">Bobot: —</span></div>
+        </div>
+        <div class="col-md-2 col-4">
+          <div class="form-check form-switch">
+            <input class="form-check-input attendance-toggle save-field" type="checkbox" role="switch" id="att_${p.id}" checked>
+            <label class="form-check-label small fw-semibold" for="att_${p.id}">Hadir</label>
+          </div>
+        </div>
+        <div class="col-md-3 col-4">
+          <input type="number" class="form-control score-input save-field" id="${p.id}" min="0" max="100" step="0.01" placeholder="0 - 100" inputmode="decimal">
+        </div>
+        <div class="col-md-3 col-4 text-end"><span class="bxn-label text-muted" id="bxn_${p.id}" data-val="">B×N: —</span></div>
+      </div>`;
+  }
+
+  function getGrade(score){ return RULES.grading.find(r => score >= r.min); }
+  function isPresent(id){ return document.getElementById('att_'+id).checked; }
+  function hasScore(id){ return document.getElementById(id).value !== ''; }
+  function val(id){ return parseFloat(document.getElementById(id).value || '0'); }
+
+  function calcSidang(){
+    const g1 = sidangPeople.filter(p=>p.group===1 && isPresent(p.id));
+    const g2 = sidangPeople.filter(p=>p.group===2 && isPresent(p.id));
+    const totalPresent = g1.length + g2.length;
+    const quorum = g1.length >= RULES.sidang.minGroup1 && g2.length >= RULES.sidang.minGroup2 && totalPresent >= RULES.sidang.minTotal;
+    const w1 = g1.length ? RULES.sidang.group1Weight / g1.length : 0;
+    const w2 = g2.length ? RULES.sidang.group2Weight / g2.length : 0;
+    let sum1=0,sum2=0,filled=0;
+
+    sidangPeople.forEach(p=>{
+      const present=isPresent(p.id);
+      const w = p.group===1 ? w1 : w2;
+      updatePersonUI(p,present,w);
+      if(present && hasScore(p.id)){
+        filled++;
+        const bxn=val(p.id)*w;
+        if(p.group===1) sum1 += bxn; else sum2 += bxn;
+        setBxn(p.id,bxn,'primary');
+      }
     });
 
-    window.addEventListener('DOMContentLoaded', () => {
-        if (document.getElementById('sidang').classList.contains('active')) {
-            hitungSidang();
-        } else {
-            hitungMagang();
+    setSubtotal('subtotal_k1','Total BxN Kelompok 1',sum1);
+    setSubtotal('subtotal_k2','Total BxN Kelompok 2',sum2);
+    const presentCount = totalPresent;
+    const complete = quorum && filled === presentCount;
+    const total = sum1+sum2;
+    const detail = `Kelompok 1: ${g1.length}/2 hadir • Kelompok 2: ${g2.length}/3 hadir • Total: ${totalPresent}/5 hadir`;
+    document.getElementById('sidang_quorum_summary').innerHTML = quorum ? '<span class="badge bg-success">✓ KUORUM</span>' : '<span class="badge bg-danger">✕ TIDAK KUORUM</span>';
+    return {mode:'Ujian Skripsi', quorum, complete, total, filled, presentCount, detail, weights:`K1 ${pct(w1)} per orang aktif • K2 ${pct(w2)} per orang aktif`};
+  }
+
+  function calcMagang(){
+    const p1=isPresent('m_p1'), p2=isPresent('m_p2');
+    const penguji=magangPeople.filter(p=>p.role==='penguji' && isPresent(p.id));
+    const quorum = p1 && p2 && penguji.length >= RULES.magang.minPenguji;
+    const wPenguji = penguji.length ? RULES.magang.pengujiTotalWeight/penguji.length : 0;
+    let total=0,filled=0,presentCount=0;
+
+    magangPeople.forEach(p=>{
+      const present=isPresent(p.id);
+      let w=0;
+      if(p.role==='pembimbing') w=RULES.magang.pembimbingWeight;
+      if(p.role==='lapangan') w=RULES.magang.lapanganWeight;
+      if(p.role==='penguji') w=wPenguji;
+      updatePersonUI(p,present,w);
+      if(present){
+        presentCount++;
+        if(hasScore(p.id)){
+          filled++;
+          const bxn=val(p.id)*w; total+=bxn; setBxn(p.id,bxn,'success');
         }
+      }
     });
 
-    function getGradeLetter(score) {
-        if (score >= 80.00) return { huruf: 'A', kelas: 'text-success' };
-        if (score >= 75.00) return { huruf: 'B+', kelas: 'text-primary' };
-        if (score >= 70.00) return { huruf: 'B', kelas: 'text-info' };
-        if (score >= 65.00) return { huruf: 'C+', kelas: 'text-warning' };
-        if (score >= 60.00) return { huruf: 'C', kelas: 'text-secondary' };
-        if (score >= 55.00) return { huruf: 'D', kelas: 'text-danger' };
-        return { huruf: 'E', kelas: 'text-dark' };
+    const complete = quorum && filled===presentCount;
+    const detail=`Pembimbing: ${p1?'Hadir':'Tidak Hadir'} • Pemb. Lapangan: ${p2?'Hadir':'Tidak Hadir'} • Penguji: ${penguji.length}/3 hadir`;
+    document.getElementById('magang_quorum_summary').innerHTML = quorum ? '<span class="badge bg-success">✓ KUORUM</span>' : '<span class="badge bg-danger">✕ TIDAK KUORUM</span>';
+    return {mode:'Seminar Magang', quorum, complete, total, filled, presentCount, detail, weights:`Pembimbing 30% • Lapangan 25% • Penguji ${pct(wPenguji)} per orang aktif`};
+  }
+
+  function updatePersonUI(p,present,weight){
+    const row=document.getElementById('row_'+p.id), input=document.getElementById(p.id), toggle=document.getElementById('att_'+p.id), weightEl=document.getElementById('weight_'+p.id), label=toggle.nextElementSibling;
+    input.disabled=!present || appState.locked;
+    toggle.disabled=appState.locked;
+    label.innerText=present?'Hadir':'Tidak Hadir';
+    label.className='form-check-label small fw-semibold '+(present?'text-success':'text-danger');
+    row.classList.toggle('absent',!present);
+    weightEl.innerText=present?`Bobot: ${pct(weight)}`:'Bobot: 0%';
+    if(!present){ setBxn(p.id,null); }
+    if(appState.locked) input.setAttribute('readonly','readonly'); else input.removeAttribute('readonly');
+  }
+
+  function setBxn(id,value,color='muted'){
+    const el=document.getElementById('bxn_'+id);
+    if(value===null || value===undefined){el.innerText='B×N: —';el.className='bxn-label text-muted';el.setAttribute('data-val','');return;}
+    el.innerText=`B×N: ${value.toFixed(2)}`; el.className=`bxn-label text-${color}`; el.setAttribute('data-val',value.toFixed(2));
+  }
+  function setSubtotal(id,label,value){const el=document.getElementById(id);el.innerText=`${label}: ${value.toFixed(2)}`;el.setAttribute('data-val',value.toFixed(2));}
+  function pct(w){return (w*100).toFixed(2).replace(/\.00$/,'')+'%';}
+
+  function currentCalc(){ return document.getElementById('sidang').classList.contains('active') ? calcSidang() : calcMagang(); }
+
+  function updateResult(){
+    const r=currentCalc();
+    const statusCard=document.getElementById('status_card'), title=document.getElementById('status_title'), detail=document.getElementById('status_detail');
+    const huruf=document.getElementById('hurufAkhir'), angka=document.getElementById('angkaAkhir');
+    const mStatus=document.getElementById('mobileStatus'), mHuruf=document.getElementById('mobileHurufAkhir'), mAngka=document.getElementById('mobileAngkaAkhir');
+
+    document.getElementById('progress_text').innerText=`${r.filled} / ${r.presentCount} nilai terisi`;
+    document.getElementById('quorum_detail').innerHTML=`<div>${r.detail}</div><div class="mt-1">${r.weights}</div>`;
+
+    if(!r.quorum){
+      statusCard.className='status-card bad mb-3';title.innerText='TIDAK KUORUM';detail.innerText='Komposisi kehadiran belum memenuhi syarat kuorum.';
+      setResultBlank('TDK KUORUM','text-danger'); mStatus.innerText='TIDAK KUORUM'; mStatus.className='small fw-bold text-danger';
+    } else if(!r.complete){
+      statusCard.className='status-card warn mb-3';title.innerText='BELUM LENGKAP';detail.innerText='Kuorum terpenuhi, tetapi masih ada nilai penilai yang hadir belum diisi.';
+      setResultBlank('-','text-muted'); mStatus.innerText='BELUM LENGKAP'; mStatus.className='small fw-bold text-warning';
+    } else {
+      statusCard.className='status-card ok mb-3';title.innerText=appState.locked?'HASIL FINAL — DIKUNCI':'HASIL SIAP DIFINALISASI';detail.innerText='Kuorum dan seluruh nilai telah lengkap.';
+      const g=getGrade(r.total); huruf.innerText=g.letter; huruf.className=`grade-big ${g.cls}`; angka.innerText=r.total.toFixed(2); angka.setAttribute('data-val',r.total.toFixed(2));
+      mHuruf.innerText=g.letter; mHuruf.className=`fs-3 fw-bold ${g.cls}`; mAngka.innerText=r.total.toFixed(2); mStatus.innerText=appState.locked?'FINAL':'SIAP'; mStatus.className='small fw-bold text-success';
     }
+    syncLockUI(); saveState();
+  }
 
-    function updateResultUI(angka) {
-        let hurufEl = document.getElementById('hurufAkhir');
-        let angkaEl = document.getElementById('angkaAkhir');
-        let mobileHurufEl = document.getElementById('mobileHurufAkhir');
-        let mobileAngkaEl = document.getElementById('mobileAngkaAkhir');
+  function setResultBlank(letter,cls){
+    const huruf=document.getElementById('hurufAkhir'),angka=document.getElementById('angkaAkhir');
+    huruf.innerText=letter;huruf.className=`${letter==='TDK KUORUM'?'fs-2':'grade-big'} fw-bold ${cls}`;angka.innerText='—';angka.setAttribute('data-val','');
+    document.getElementById('mobileHurufAkhir').innerText=letter==='TDK KUORUM'?'!':'-';document.getElementById('mobileHurufAkhir').className=`fs-3 fw-bold ${cls}`;document.getElementById('mobileAngkaAkhir').innerText='—';
+  }
 
-        hurufEl.style.transform = 'scale(1.1)';
-        angkaEl.style.transform = 'scale(1.1)';
-        mobileHurufEl.style.transform = 'scale(1.1)';
-        
-        setTimeout(() => {
-            hurufEl.style.transform = 'scale(1)';
-            angkaEl.style.transform = 'scale(1)';
-            mobileHurufEl.style.transform = 'scale(1)';
-        }, 150);
+  function finalizeResult(){
+    const r=currentCalc();
+    if(!r.quorum) return alert('Belum dapat difinalisasi: syarat kuorum belum terpenuhi.');
+    if(!r.complete) return alert('Belum dapat difinalisasi: masih ada nilai penilai yang hadir belum diisi.');
+    if(!confirm('Finalisasi hasil dan kunci semua input?')) return;
+    appState.locked=true; applyLock(); updateResult();
+  }
+  function unlockResult(){ if(confirm('Buka kunci agar nilai dapat diedit kembali?')){appState.locked=false;applyLock();updateResult();} }
+  function applyLock(){
+    document.querySelectorAll('.save-field').forEach(el=>{ if(el.classList.contains('attendance-toggle')) el.disabled=appState.locked; else el.disabled=appState.locked || (el.classList.contains('score-input') && !isPresent(el.id)); });
+  }
+  function syncLockUI(){
+    document.getElementById('lock_badge').innerText=appState.locked?'Final':'Editable';document.getElementById('lock_badge').className=`badge ${appState.locked?'bg-success':'bg-light text-secondary border'}`;
+    document.getElementById('finalize_btn').classList.toggle('d-none',appState.locked);document.getElementById('unlock_btn').classList.toggle('d-none',!appState.locked);document.getElementById('locked_note').classList.toggle('d-none',!appState.locked);
+  }
 
-        if (angka === 0) {
-            angkaEl.innerText = '0.00';
-            angkaEl.setAttribute('data-val', '0.00');
-            hurufEl.innerText = '-';
-            hurufEl.className = 'display-2 fw-bold text-muted mb-0';
-            
-            mobileAngkaEl.innerText = '0.00';
-            mobileHurufEl.innerText = '-';
-            mobileHurufEl.className = 'display-6 fw-bold text-muted';
-            return;
-        }
+  function handleAttendance(toggle){
+    const id=toggle.id.replace('att_','');
+    if(!toggle.checked){ const input=document.getElementById(id); if(input.value!=='' && !confirm('Nilai yang sudah diisi akan dikosongkan karena penilai ditandai Tidak Hadir. Lanjutkan?')){toggle.checked=true;return;} input.value=''; }
+    updateResult();
+  }
 
-        const hasil = getGradeLetter(angka);
-        
-        angkaEl.innerText = angka.toFixed(2);
-        angkaEl.setAttribute('data-val', angka.toFixed(2));
-        hurufEl.innerText = hasil.huruf;
-        hurufEl.className = `display-2 fw-bold mb-0 ${hasil.kelas}`;
-        
-        mobileAngkaEl.innerText = angka.toFixed(2);
-        mobileHurufEl.innerText = hasil.huruf;
-        mobileHurufEl.className = `display-6 fw-bold ${hasil.kelas}`;
-    }
+  function copyText(text,btn,success='✅ Tersalin!'){
+    navigator.clipboard.writeText(text).then(()=>{const old=btn.innerHTML,cls=btn.className;btn.innerHTML=success;btn.className=cls.replace('btn-outline-primary','btn-success').replace('btn-outline-success','btn-success');setTimeout(()=>{btn.innerHTML=old;btn.className=cls},1200)});
+  }
+  function copySidangColumn(tipe,btn){
+    const lines=sidangPeople.map(p=> isPresent(p.id) ? document.getElementById(p.id).value.replace('.',',') : ''); copyText(lines.join('\n'),btn);
+  }
+  function copyMagangColumn(tipe,btn){
+    const lines=magangPeople.map(p=>{ if(!isPresent(p.id)) return ''; if(tipe==='nilai') return document.getElementById(p.id).value.replace('.',','); const v=document.getElementById('bxn_'+p.id).getAttribute('data-val')||''; return v.replace('.',',');}); copyText(lines.join('\n'),btn);
+  }
+  function copySingleValue(id,btn){const v=(document.getElementById(id).getAttribute('data-val')||'0.00').replace('.',',');copyText(v,btn,'✅');}
+  function copyHasilAkhir(btn){
+    const angka=document.getElementById('angkaAkhir').getAttribute('data-val'); const huruf=document.getElementById('hurufAkhir').innerText;
+    if(!angka) return alert('Hasil akhir belum tersedia. Pastikan kuorum terpenuhi dan semua nilai sudah diisi.');
+    copyText(`${angka.replace('.',',')}\n${huruf}`,btn,'✅ Angka & Huruf Tersalin!');
+  }
 
-    function hitungSidang() {
-        let p1 = document.getElementById('s_p1'); // Ketua
-        let p2 = document.getElementById('s_p2'); // Sekretaris
-        let p3 = document.getElementById('s_p3'); // Anggota 1
-        let p4 = document.getElementById('s_p4'); // Anggota 2
-        let p5 = document.getElementById('s_p5'); // Anggota 3
+  function saveState(){
+    const data={locked:appState.locked,active:document.getElementById('sidang').classList.contains('active')?'sidang':'magang',fields:{}};
+    document.querySelectorAll('.save-field').forEach(el=>data.fields[el.id]=el.type==='checkbox'?el.checked:el.value);
+    localStorage.setItem(APP_KEY,JSON.stringify(data));
+  }
+  function loadState(){
+    try{
+      const raw=localStorage.getItem(APP_KEY); if(!raw) return;
+      const data=JSON.parse(raw); appState.locked=!!data.locked;
+      Object.entries(data.fields||{}).forEach(([id,v])=>{const el=document.getElementById(id);if(!el)return;if(el.type==='checkbox')el.checked=!!v;else el.value=v;});
+      if(data.active==='magang') new bootstrap.Tab(document.getElementById('magang-tab')).show();
+    }catch(e){console.warn('Gagal memulihkan state',e)}
+  }
+  function resetForm(confirmFirst=false){
+    if(confirmFirst && !confirm('Yakin ingin mengosongkan semua nilai dan status kehadiran?')) return;
+    appState.locked=false;
+    document.querySelectorAll('.score-input').forEach(i=>i.value='');
+    document.querySelectorAll('.attendance-toggle').forEach(i=>i.checked=true);
+    localStorage.removeItem(APP_KEY); applyLock(); updateResult();
+  }
+  function startNewSession(){ if(confirm('Mulai penilaian baru? Nilai dan status kehadiran yang tersimpan sementara akan dihapus.')) resetForm(false); }
 
-        let lbl1 = document.getElementById('label_s_p1');
-        let lbl2 = document.getElementById('label_s_p2');
-        let lbl3 = document.getElementById('label_s_p3');
-        let lbl4 = document.getElementById('label_s_p4');
-        let lbl5 = document.getElementById('label_s_p5');
-
-        let k1_inputs = [p1, p2];
-        let k2_inputs = [p3, p4, p5];
-        
-        let k1_hadir = k1_inputs.filter(el => el.value !== '');
-        let k2_hadir = k2_inputs.filter(el => el.value !== '');
-
-        // Kembalikan label ke bentuk standar setiap kali input diubah
-        lbl1.innerText = 'Penguji 1 (Ketua)';
-        lbl2.innerText = 'Penguji 2 (Sekretaris)';
-        lbl3.innerText = 'Penguji 3 (Anggota)';
-        lbl4.innerText = 'Penguji 4 (Anggota)';
-        lbl5.innerText = 'Penguji 5 (Anggota)';
-
-        // Reset text "Tidak Hadir" jika kosong
-        [...k1_inputs, ...k2_inputs].forEach(input => {
-            let label = document.getElementById(`bxn_${input.id}`);
-            if (input.value === '') {
-                label.innerHTML = `<span class="text-danger small">Tidak Hadir</span>`;
-            }
-        });
-
-        // 1. CEK SYARAT KUORUM UJIAN SKRIPSI
-        if (k1_hadir.length < 1 || k2_hadir.length < 2) {
-            document.getElementById('subtotal_k1').innerText = `Total BxN Kelompok 1: 0.00`;
-            document.getElementById('subtotal_k2').innerText = `Total BxN Kelompok 2: 0.00`;
-            
-            updateResultUI(0);
-            
-            document.getElementById('hurufAkhir').innerText = 'TDK KUORUM';
-            document.getElementById('hurufAkhir').className = 'display-6 fw-bold text-danger mb-0 mt-3';
-            document.getElementById('mobileHurufAkhir').innerText = 'TDK KUORUM';
-            document.getElementById('mobileHurufAkhir').className = 'fs-3 fw-bold text-danger';
-            return;
-        }
-
-        // 2. PERHITUNGAN & UPDATE LABEL ADAPTIF
-        let bobot_k1_per_orang = 0.65 / k1_hadir.length;
-        let bobot_k2_per_orang = 0.35 / k2_hadir.length;
-
-        // Persiapkan string persen (hapus .00 jika bulat)
-        let strK1 = Number.isInteger(bobot_k1_per_orang * 100) ? (bobot_k1_per_orang * 100) : (bobot_k1_per_orang * 100).toFixed(2);
-        let strK2 = Number.isInteger(bobot_k2_per_orang * 100) ? (bobot_k2_per_orang * 100) : (bobot_k2_per_orang * 100).toFixed(2);
-
-        // Tempelkan persen adaptif ke label jika nilainya diisi
-        if (p1.value !== '') lbl1.innerText = `Penguji 1 (Ketua) - ${strK1}%`;
-        if (p2.value !== '') lbl2.innerText = `Penguji 2 (Sekretaris) - ${strK1}%`;
-        if (p3.value !== '') lbl3.innerText = `Penguji 3 (Anggota) - ${strK2}%`;
-        if (p4.value !== '') lbl4.innerText = `Penguji 4 (Anggota) - ${strK2}%`;
-        if (p5.value !== '') lbl5.innerText = `Penguji 5 (Anggota) - ${strK2}%`;
-
-        let sumK1 = 0;
-        k1_inputs.forEach(el => {
-            if (el.value !== '') {
-                let bxn = parseFloat(el.value) * bobot_k1_per_orang;
-                sumK1 += bxn;
-                document.getElementById(`bxn_${el.id}`).innerHTML = `<span class="text-primary">BxN: ${bxn.toFixed(2)}</span>`;
-            }
-        });
-
-        let sumK2 = 0;
-        k2_inputs.forEach(el => {
-            if (el.value !== '') {
-                let bxn = parseFloat(el.value) * bobot_k2_per_orang;
-                sumK2 += bxn;
-                document.getElementById(`bxn_${el.id}`).innerHTML = `<span class="text-primary">BxN: ${bxn.toFixed(2)}</span>`;
-            }
-        });
-
-        let sub1El = document.getElementById('subtotal_k1');
-        let sub2El = document.getElementById('subtotal_k2');
-        
-        sub1El.innerText = `Total BxN Kelompok 1: ${sumK1.toFixed(2)}`;
-        sub1El.setAttribute('data-val', sumK1.toFixed(2));
-        
-        sub2El.innerText = `Total BxN Kelompok 2: ${sumK2.toFixed(2)}`;
-        sub2El.setAttribute('data-val', sumK2.toFixed(2));
-
-        let total = sumK1 + sumK2;
-        updateResultUI(total);
-    }
-
-    function hitungMagang() {
-        let p1 = document.getElementById('m_p1');
-        let p2 = document.getElementById('m_p2');
-        let p3 = document.getElementById('m_p3');
-        let p4 = document.getElementById('m_p4');
-        let p5 = document.getElementById('m_p5');
-
-        let lbl_m1 = document.getElementById('label_m_p1');
-        let lbl_m2 = document.getElementById('label_m_p2');
-        let lbl_m3 = document.getElementById('label_m_p3');
-        let lbl_m4 = document.getElementById('label_m_p4');
-        let lbl_m5 = document.getElementById('label_m_p5');
-
-        let allMagang = [p1, p2, p3, p4, p5];
-        
-        // Kembalikan label ke bentuk standar
-        lbl_m1.innerText = 'Penguji 1 (Dosen Pemb.)';
-        lbl_m2.innerText = 'Penguji 2 (Pemb. Lapangan)';
-        lbl_m3.innerText = 'Penguji 3 (Ketua)';
-        lbl_m4.innerText = 'Penguji 4 (Anggota 1)';
-        lbl_m5.innerText = 'Penguji 5 (Anggota 2)';
-
-        allMagang.forEach(input => {
-            let label = document.getElementById(`bxn_${input.id}`);
-            if (input.value === '') {
-                label.innerHTML = `<span class="text-danger small">Tidak Hadir</span>`;
-                label.setAttribute('data-val', '');
-            }
-        });
-
-        let isP1Hadir = p1.value !== '';
-        let isP2Hadir = p2.value !== '';
-        
-        let pengujiHadir = [];
-        if (p3.value !== '') pengujiHadir.push(p3);
-        if (p4.value !== '') pengujiHadir.push(p4);
-        if (p5.value !== '') pengujiHadir.push(p5);
-
-        // 1. CEK SYARAT KUORUM
-        if (!isP1Hadir || !isP2Hadir || pengujiHadir.length < 2) {
-            updateResultUI(0);
-            
-            let hurufEl = document.getElementById('hurufAkhir');
-            hurufEl.innerText = 'TDK KUORUM';
-            hurufEl.className = 'display-6 fw-bold text-danger mb-0 mt-3'; 
-            
-            let mobileHurufEl = document.getElementById('mobileHurufAkhir');
-            mobileHurufEl.innerText = 'TDK KUORUM';
-            mobileHurufEl.className = 'fs-3 fw-bold text-danger';
-            
-            return; 
-        }
-
-        // 2. JIKA KUORUM TERPENUHI, LAKUKAN PERHITUNGAN & UPDATE LABEL
-        lbl_m1.innerText = 'Penguji 1 (Dosen Pemb.) - 30%';
-        lbl_m2.innerText = 'Penguji 2 (Pemb. Lapangan) - 25%';
-
-        let persenK3 = (0.45 / pengujiHadir.length) * 100;
-        let strK3 = Number.isInteger(persenK3) ? persenK3 : persenK3.toFixed(2);
-
-        if (p3.value !== '') lbl_m3.innerText = `Penguji 3 (Ketua) - ${strK3}%`;
-        if (p4.value !== '') lbl_m4.innerText = `Penguji 4 (Anggota 1) - ${strK3}%`;
-        if (p5.value !== '') lbl_m5.innerText = `Penguji 5 (Anggota 2) - ${strK3}%`;
-
-        let totalScore = 0;
-
-        let bxnP1 = parseFloat(p1.value) * 0.30;
-        totalScore += bxnP1;
-        document.getElementById('bxn_m_p1').innerHTML = `<span class="text-success">BxN: ${bxnP1.toFixed(2)}</span>`;
-        document.getElementById('bxn_m_p1').setAttribute('data-val', bxnP1.toFixed(2));
-
-        let bxnP2 = parseFloat(p2.value) * 0.25;
-        totalScore += bxnP2;
-        document.getElementById('bxn_m_p2').innerHTML = `<span class="text-success">BxN: ${bxnP2.toFixed(2)}</span>`;
-        document.getElementById('bxn_m_p2').setAttribute('data-val', bxnP2.toFixed(2));
-
-        let bobotKomisiPenguji = 0.45 / pengujiHadir.length; 
-        
-        pengujiHadir.forEach(p => {
-            let bxn = parseFloat(p.value) * bobotKomisiPenguji;
-            totalScore += bxn;
-            let label = document.getElementById(`bxn_${p.id}`);
-            label.innerHTML = `<span class="text-success">BxN: ${bxn.toFixed(2)}</span>`;
-            label.setAttribute('data-val', bxn.toFixed(2));
-        });
-
-        updateResultUI(totalScore);
-    }
-
-    function copySidangColumn(tipe, btn) {
-        if (tipe === 'nilai') {
-            let textToCopy = "";
-            for (let i = 1; i <= 5; i++) {
-                let nilai = document.getElementById('s_p' + i).value;
-                textToCopy += (nilai !== "" ? nilai.replace('.', ',') : "") + "\n";
-            }
-            textToCopy = textToCopy.trim();
-            
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                let originalText = btn.innerHTML;
-                let originalClass = btn.className;
-                
-                btn.innerHTML = "✅ Tersalin!";
-                btn.className = "btn btn-sm btn-success w-100 fw-bold shadow-sm";
-                
-                setTimeout(() => {
-                    btn.innerHTML = originalText;
-                    btn.className = originalClass;
-                }, 1500);
-            });
-        }
-    }
-
-    function copyMagangColumn(tipe, btn) {
-        let textToCopy = "";
-        let prefix = 'm_p';
-
-        if (tipe === 'nilai') {
-            for (let i = 1; i <= 5; i++) {
-                let nilai = document.getElementById(prefix + i).value;
-                textToCopy += (nilai !== "" ? nilai.replace('.', ',') : "") + "\n";
-            }
-        } else if (tipe === 'bxn') {
-            for (let i = 1; i <= 5; i++) {
-                let labelEl = document.getElementById('bxn_' + prefix + i);
-                let bxn = labelEl.getAttribute('data-val') || "";
-                textToCopy += (bxn !== "" ? bxn.replace('.', ',') : "") + "\n";
-            }
-        }
-        
-        textToCopy = textToCopy.trim();
-
-        navigator.clipboard.writeText(textToCopy).then(() => {
-            let originalText = btn.innerHTML;
-            let originalClass = btn.className;
-            
-            btn.innerHTML = "✅ Tersalin!";
-            btn.className = "btn btn-sm btn-success w-100 fw-bold shadow-sm";
-            
-            setTimeout(() => {
-                btn.innerHTML = originalText;
-                btn.className = originalClass;
-            }, 1500);
-        });
-    }
-
-    function copySingleValue(elementId, btn) {
-        let element = document.getElementById(elementId);
-        let valToCopy = element.getAttribute('data-val') || "0.00";
-        valToCopy = valToCopy.replace('.', ','); 
-
-        navigator.clipboard.writeText(valToCopy).then(() => {
-            let originalText = btn.innerHTML;
-            let originalClass = btn.className;
-            
-            btn.innerHTML = "✅";
-            btn.className = "btn btn-success btn-copy-small ms-2 fw-bold";
-            
-            setTimeout(() => {
-                btn.innerHTML = originalText;
-                btn.className = originalClass;
-            }, 1200);
-        });
-    }
-
-    function copyHasilAkhir(btn) {
-        let angka = document.getElementById('angkaAkhir').getAttribute('data-val') || "0.00";
-        let huruf = document.getElementById('hurufAkhir').innerText || "-";
-        
-        angka = angka.replace('.', ',');
-        let textToCopy = `${angka}\n${huruf}`;
-
-        navigator.clipboard.writeText(textToCopy).then(() => {
-            let originalText = btn.innerHTML;
-            let originalClass = btn.className;
-            
-            btn.innerHTML = "✅ Angka & Huruf Tersalin!";
-            btn.className = "btn btn-success btn-sm px-4 fw-bold shadow-sm";
-            
-            setTimeout(() => {
-                btn.innerHTML = originalText;
-                btn.className = originalClass;
-            }, 1500);
-        });
-    }
-
-    function resetForm() {
-        // Reset Inputs
-        document.querySelectorAll('input[type="number"]').forEach(input => input.value = '');
-        document.querySelectorAll('.bxn-label').forEach(label => {
-            label.innerText = 'BxN: 0.00';
-            label.removeAttribute('data-val');
-        });
-        
-        // Kembalikan text label asli
-        document.getElementById('label_s_p1').innerText = 'Penguji 1 (Ketua)';
-        document.getElementById('label_s_p2').innerText = 'Penguji 2 (Sekretaris)';
-        document.getElementById('label_s_p3').innerText = 'Penguji 3 (Anggota)';
-        document.getElementById('label_s_p4').innerText = 'Penguji 4 (Anggota)';
-        document.getElementById('label_s_p5').innerText = 'Penguji 5 (Anggota)';
-
-        document.getElementById('label_m_p1').innerText = 'Penguji 1 (Dosen Pemb.)';
-        document.getElementById('label_m_p2').innerText = 'Penguji 2 (Pemb. Lapangan)';
-        document.getElementById('label_m_p3').innerText = 'Penguji 3 (Ketua)';
-        document.getElementById('label_m_p4').innerText = 'Penguji 4 (Anggota 1)';
-        document.getElementById('label_m_p5').innerText = 'Penguji 5 (Anggota 2)';
-
-        let sub1El = document.getElementById('subtotal_k1');
-        let sub2El = document.getElementById('subtotal_k2');
-        
-        sub1El.innerText = 'Total BxN Kelompok 1: 0.00';
-        sub1El.setAttribute('data-val', '0.00');
-        
-        sub2El.innerText = 'Total BxN Kelompok 2: 0.00';
-        sub2El.setAttribute('data-val', '0.00');
-        
-        updateResultUI(0);
-        
-        if (document.getElementById('sidang').classList.contains('active')) {
-            document.getElementById('s_p1').focus();
-        } else {
-            document.getElementById('m_p1').focus();
-        }
-    }
-
-    // Mendengarkan pergantian pill toggle
-    document.querySelectorAll('button[data-bs-toggle="pill"]').forEach(pill => {
-        pill.addEventListener('shown.bs.tab', function (event) {
-            if (event.target.id === 'sidang-tab') hitungSidang();
-            if (event.target.id === 'magang-tab') hitungMagang();
-        });
+  document.addEventListener('DOMContentLoaded',()=>{
+    renderRows();
+    loadState();
+    document.querySelectorAll('.attendance-toggle').forEach(t=>t.addEventListener('change',()=>handleAttendance(t)));
+    document.querySelectorAll('.score-input').forEach((input)=>{
+      input.addEventListener('input',()=>{ if(+input.value>100)input.value=100;if(+input.value<0)input.value=0;updateResult(); });
+      input.addEventListener('focus',()=>input.select());
+      input.addEventListener('keydown',e=>{ if(e.key==='Enter'){e.preventDefault();const enabled=[...document.querySelectorAll('.score-input')].filter(i=>!i.disabled);const idx=enabled.indexOf(input);if(idx>=0&&idx<enabled.length-1)enabled[idx+1].focus();else input.blur();} });
     });
+    document.querySelectorAll('button[data-bs-toggle="pill"]').forEach(pill=>pill.addEventListener('shown.bs.tab',()=>updateResult()));
+    applyLock(); updateResult();
+  });
 </script>
 </body>
 </html>
